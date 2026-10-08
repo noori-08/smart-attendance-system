@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+
+                <div class="teacher-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="teacher-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="teacher-brand-subtitle">
+                        Teacher Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="teacher-menu">
+
+    <a href="/teacher_dashboard" class="active">
+        🏠 Dashboard
+    </a>
+
+    <a href="/teacher_subjects">
+        📚 Subjects
+    </a>
+
+    <a href="/teacher_offerings">
+        🏫 Class Offerings
+    </a>
+
+    <a href="/teacher_students">
+        👥 Students
+    </a>
+
+    <a href="/teacher_qr">
+        📷 Generate QR
+    </a>
+
+    <a href="/teacher_attendance_page">
+        📋 Attendance
+    </a>
+
+    <a href="/teacher_reports">
+        📊 Reports
+    </a>
+
+    <a href="/logout" class="logout">
+        🚪 Logout
+    </a>
+
+</nav>
+
+        </aside>
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="teacher-main">
+
+            <!-- PAGE HEADER -->
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Good day, {{ teacher.name }} 👋
+                </h1>
+
+                <p>
+                    Welcome to your SmartAttend dashboard.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
+
+            <div class="teacher-card-grid">
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Total Attendance Records
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="totalRecords">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Present Today
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="presentToday">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Students Present
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="studentsPresent">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Attendance Rate
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="attendanceRate">
+                        0%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 QUICK ACTIONS
+            ========================== -->
+
+            <div class="teacher-content-card">
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+                <p>
+                    Manage your attendance system from the sections below.
+                </p>
+
+
+                <div class="teacher-card-grid">
+
+
+                    <!-- SUBJECTS -->
+
+                    <a
+                        href="/teacher_subjects"
+                        class="teacher-action-card">
+
+                        <div class="teacher-stat-label">
+                            📚 Subjects
+                        </div>
+
+                        <div class="teacher-action-text">
+                            Manage your subjects.
+                        </div>
+
+                    </a>
+
+
+                    <!-- CLASS OFFERINGS -->
+
+                    <a
+                        href="/teacher_offerings"
+                        class="teacher-action-card">
+
+                        <div class="teacher-stat-label">
+                            🏫 Classes
+                        </div>
+
+                        <div class="teacher-action-text">
+                            Manage class offerings.
+                        </div>
+
+                    </a>
+
+
+                    <!-- QR -->
+
+                    <a
+                        href="/teacher_qr"
+                        class="teacher-action-card">
+
+                        <div class="teacher-stat-label">
+                            📷 QR Attendance
+                        </div>
+
+                        <div class="teacher-action-text">
+                            Generate a class QR code.
+                        </div>
+
+                    </a>
+
+
+                    <!-- REPORTS -->
+
+                    <a
+                        href="/teacher_reports"
+                        class="teacher-action-card">
+
+                        <div class="teacher-stat-label">
+                            📊 Reports
+                        </div>
+
+                        <div class="teacher-action-text">
+                            View attendance reports.
+                        </div>
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 INFORMATION
+            ========================== -->
+
+            <div class="teacher-content-card">
+
+                <h2>
+                    SmartAttend
+                </h2>
+
+                <p>
+                    Dynamic QR codes, GPS verification and face recognition
+                    help make attendance more secure and reliable.
+                </p>
+
+            </div>
+
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function loadTeacherStats() {
+
+    try {
+
+        const response =
+            await fetch("/teacher_stats");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        document.getElementById("totalRecords").textContent =
+            data.total_records;
+
+        document.getElementById("presentToday").textContent =
+            data.present_today;
+
+        document.getElementById("studentsPresent").textContent =
+            data.students_present;
+
+        document.getElementById("attendanceRate").textContent =
+            data.attendance_rate + "%";
+
+    } catch (error) {
+
+        console.error(
+            "Statistics error:",
+            error
+        );
+
+    }
+
+}
+
+loadTeacherStats();
+
+</script>
+
+{% endblock %}

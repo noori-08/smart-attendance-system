@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card formcard">
+
+    <div class="big">🧑‍🎓</div>
+
+    <h2>Student Registration</h2>
+
+    <p>Create your attendance profile.</p>
+
+    <form id="reg">
+
+        <div class="grid">
+
+            <input
+                name="name"
+                placeholder="Full name"
+                required
+            >
+
+            <input
+                name="usn"
+                placeholder="USN"
+                required
+            >
+
+            <input
+                name="email"
+                type="email"
+                placeholder="College email"
+                required
+            >
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter password"
+                    required
+    >
+            </div>
+
+            <input
+                name="department"
+                placeholder="Department"
+                required
+            >
+
+            <input
+                name="semester"
+                type="number"
+                min="1"
+                max="10"
+                placeholder="Semester"
+                required
+            >
+
+            <select name="academic_year" required>
+
+                <option value="">
+                    Select Academic Year
+                </option>
+
+                <option value="2026-27">
+                    2026-27
+                </option>
+
+                <option value="2027-28">
+                    2027-28
+                </option>
+
+                <option value="2028-29">
+                    2028-29
+                </option>
+
+            </select>
+
+        </div>
+
+        <label class="upload">
+
+            📷 Choose registered face photo
+
+            <input
+                name="photo"
+                type="file"
+                accept="image/png,image/jpeg"
+                required
+            >
+
+        </label>
+
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
+
+        <p id="result"></p>
+
+    <div id="otpSection" style="display:none; margin-top:20px;">
+
+        <input
+            type="text"
+            id="studentOtp"
+            placeholder="Enter 6-digit OTP"
+            maxlength="6"
+        >
+
+        <button
+            type="button"
+            onclick="verifyStudentOTP()"
+        >
+            Verify & Register
+        </button>
+
+    </div>
+
+    <a href="/">
+        ← Back to login
+    </a>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+const form =
+    document.getElementById("reg");
+
+const result =
+    document.getElementById("result");
+
+const otpSection =
+    document.getElementById("otpSection");
+
+
+form.onsubmit = async e => {
+
+    e.preventDefault();
+
+    result.textContent =
+        "Sending OTP...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/register_student",
+                {
+                    method: "POST",
+                    body: new FormData(form)
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        result.textContent =
+            data.message;
+
+
+        if (data.success) {
+
+            otpSection.style.display =
+                "block";
+
+        }
+
+    }
+
+    catch (error) {
+
+        result.textContent =
+            "Unable to send OTP.";
+
+    }
+
+};
+
+
+async function verifyStudentOTP() {
+
+    const email =
+        form.querySelector(
+            'input[name="email"]'
+        ).value.trim();
+
+
+    const otp =
+        document.getElementById(
+            "studentOtp"
+        ).value.trim();
+
+
+    if (!otp) {
+
+        result.textContent =
+            "Please enter the OTP.";
+
+        return;
+
+    }
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "email",
+        email
+    );
+
+
+    formData.append(
+        "otp",
+        otp
+    );
+
+
+    result.textContent =
+        "Verifying OTP...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/verify_student_otp",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        result.textContent =
+            data.message;
+
+
+        if (data.success) {
+
+            form.reset();
+
+            otpSection.style.display =
+                "none";
+
+            setTimeout(
+                () => location.href = "/",
+                1200
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        result.textContent =
+            "Unable to verify OTP.";
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

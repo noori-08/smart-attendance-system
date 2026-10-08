@@ -1,0 +1,1280 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+
+                <div class="teacher-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="teacher-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="teacher-brand-subtitle">
+                        Teacher Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="teacher-menu">
+
+                <a href="/teacher_dashboard" class="active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="#subjects">
+                    📚 Subjects
+                </a>
+
+                <a href="#offerings">
+                    🏫 Class Offerings
+                </a>
+
+                <a href="#students">
+                    👥 Students
+                </a>
+
+                <a href="#qr">
+                    📷 Generate QR
+                </a>
+
+                <a href="#attendance">
+                    📋 Attendance
+                </a>
+
+                <a href="#reports">
+                    📊 Reports
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN AREA -->
+        <main class="teacher-main">
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Good day, {{ teacher.name }} 👋
+                </h1>
+
+                <p>
+                    Manage your classes, students and attendance from one place.
+                </p>
+
+            </div>
+
+
+<section class="columns">
+
+    <!-- CLASS OFFERING MANAGEMENT -->
+
+<section class="card">
+
+    <h2>🏫 Manage Class Offerings</h2>
+
+    <p>
+        Create a class offering for a specific department,
+        semester, and academic year.
+    </p>
+
+    <div class="grid">
+
+        <select id="offeringSubject">
+
+            <option value="">
+                Select Subject
+            </option>
+
+        </select>
+
+
+        <input
+            type="text"
+            id="offeringDepartment"
+            placeholder="Department e.g. BCA"
+        >
+
+
+        <input
+            type="number"
+            id="offeringSemester"
+            min="1"
+            max="10"
+            placeholder="Semester"
+        >
+
+
+        <select id="offeringAcademicYear" onchange="toggleCustomAcademicYear()">
+
+    <option value="">
+        Select Academic Year
+    </option>
+
+    <option value="2026-27">
+        2026-27
+    </option>
+
+    <option value="2027-28">
+        2027-28
+    </option>
+
+    <option value="2028-29">
+        2028-29
+    </option>
+
+    <option value="other">
+        Other / Add New Year
+    </option>
+
+</select>
+
+<input
+    type="text"
+    id="customAcademicYear"
+    placeholder="Enter academic year e.g. 2029-30"
+    maxlength="7"
+    style="display:none;"
+>
+    </div>
+
+
+    <button
+        type="button"
+        onclick="createOffering()"
+        style="margin-top:15px;"
+    >
+        ＋ Create Class Offering
+    </button>
+
+
+    <p id="offeringResult"></p>
+
+</section>
+
+<!-- STUDENT ENROLLMENT -->
+
+<section class="card">
+
+    <h2>🎓 Student Enrollment</h2>
+
+    <p>
+        Enroll a student into a specific class offering.
+    </p>
+
+    <div class="grid">
+
+        <select id="enrollmentStudent">
+
+            <option value="">
+                Select Student
+            </option>
+
+        </select>
+
+
+        <select id="enrollmentOffering">
+
+            <option value="">
+                Select Class Offering
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button
+        type="button"
+        onclick="enrollStudent()"
+        style="margin-top:15px;"
+    >
+        ＋ Enroll Student
+    </button>
+
+
+    <p id="enrollmentResult"></p>
+
+</section>
+
+    <!-- MANAGE SUBJECTS -->
+<section class="card">
+
+    <h2>📚 Manage Subjects</h2>
+
+    <p>
+        Add subjects to the attendance system.
+    </p>
+
+    <div class="grid">
+
+    <input
+        type="text"
+        id="newSubjectName"
+        placeholder="Subject name"
+    >
+
+    </div>
+
+    <button
+        type="button"
+        onclick="addSubject()"
+        style="margin-top:15px;"
+    >
+        ＋ Add Subject
+    </button>
+
+    <p id="subjectResult"></p>
+
+</section>
+
+    <!-- GENERATE QR -->
+    <div class="card">
+
+        <h2>Generate Dynamic QR</h2>
+
+        <p>
+            Every QR is unique and expires after 5 minutes.
+        </p>
+
+        <select id="subject">
+    {% for o in offerings %}
+    <option value="{{ o.offering_id }}">
+        {{ o.subject_name }} — {{ o.department }} Sem {{ o.semester }} ({{ o.academic_year }})
+    </option>
+    {% endfor %}
+        </select>
+
+        <button onclick="generateQR()">
+            Generate QR
+        </button>
+
+        <p id="result"></p>
+
+    </div>
+
+
+    <!-- CURRENT QR -->
+    <div class="card center">
+
+        <h2>Current QR</h2>
+
+        <img
+            id="qr"
+            class="qr"
+            src="{{url_for('static',filename='qr_codes/current_qr.png')}}"
+            onerror="this.style.display='none'"
+        >
+
+       <p>
+    Display this QR to students.
+</p>
+
+<p
+    id="qrCountdown"
+    style="
+        font-size: 22px;
+        font-weight: 700;
+        margin-top: 10px;
+    "
+>
+    QR not generated
+</p>
+
+    </div>
+
+</section>
+
+
+<!-- TEACHER STATISTICS -->
+<section class="stats">
+
+    <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div>
+            <p>Total Records</p>
+            <h2 id="totalRecords">0</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div>
+            <p>Present Today</p>
+            <h2 id="presentToday">0</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">👨‍🎓</div>
+        <div>
+            <p>Students Present</p>
+            <h2 id="studentsPresent">0</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div>
+            <p>Attendance Rate</p>
+            <h2 id="attendanceRate">0%</h2>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ATTENDANCE FILTERS -->
+<section class="card">
+
+    <h2>🔎 Attendance Filters</h2>
+    <p>Filter attendance records by student, subject, or date.</p>
+
+    <div class="grid">
+
+        <input
+            type="text"
+            id="attendanceSearch"
+            placeholder="Search student name or USN"
+        >
+
+        <select id="attendanceSubject">
+
+    <option value="">
+        All Classes
+    </option>
+
+    {% for o in offerings %}
+
+    <option value="{{ o.offering_id }}">
+        {{ o.subject_name }} — {{ o.department }} Sem {{ o.semester }} ({{ o.academic_year }})
+    </option>
+
+    {% endfor %}
+
+</select>
+
+        <input
+            type="date"
+            id="attendanceDate"
+        >
+
+    </div>
+
+    <div style="margin-top: 15px; display: flex; gap: 10px;">
+
+        <button type="button" onclick="applyAttendanceFilters()">
+            🔎 Apply Filters
+        </button>
+
+        <button type="button" onclick="clearAttendanceFilters()">
+            ✖ Clear
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ATTENDANCE -->
+<section class="card">
+
+    <div class="section-title">
+
+        <div>
+            <h2>📋 Recent Attendance</h2>
+            <p>Students who have marked attendance.</p>
+        </div>
+
+        <button onclick="loadTeacherAttendance()">
+            🔄 Refresh
+        </button>
+
+        <button type="button" onclick="exportAttendance()">
+    📥 Export CSV
+        </button>
+
+    </div>
+
+
+    <div id="teacherAttendance">
+        Loading attendance...
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+    // ======================================
+// LOAD STUDENTS FOR ENROLLMENT
+// ======================================
+
+async function loadEnrollmentStudents() {
+
+    try {
+
+        const response =
+            await fetch("/get_students");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        const select =
+            document.getElementById(
+                "enrollmentStudent"
+            );
+
+        select.innerHTML =
+            '<option value="">Select Student</option>';
+
+        data.students.forEach(student => {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                student.student_id;
+
+            option.textContent =
+                `${student.name} — ${student.usn}`;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Student loading error:",
+            error
+        );
+
+    }
+}
+
+
+// ======================================
+// LOAD OFFERINGS FOR ENROLLMENT
+// ======================================
+
+async function loadEnrollmentOfferings() {
+
+    try {
+
+        const response =
+            await fetch("/get_offerings");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        const select =
+            document.getElementById(
+                "enrollmentOffering"
+            );
+
+        select.innerHTML =
+            '<option value="">Select Class Offering</option>';
+
+        data.offerings.forEach(offering => {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                offering.offering_id;
+
+            option.textContent =
+                `${offering.subject_name} — ${offering.department} Sem ${offering.semester} (${offering.academic_year})`;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Offering loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+// ======================================
+// ENROLL STUDENT
+// ======================================
+
+async function enrollStudent() {
+
+    const student =
+        document.getElementById(
+            "enrollmentStudent"
+        ).value;
+
+    const offering =
+        document.getElementById(
+            "enrollmentOffering"
+        ).value;
+
+    const result =
+        document.getElementById(
+            "enrollmentResult"
+        );
+
+
+    if (!student || !offering) {
+
+        result.textContent =
+            "Please select a student and class offering.";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/enroll_student",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        student_id:
+                            student,
+
+                        offering_id:
+                            offering
+
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        result.textContent =
+            data.message;
+
+
+        if (data.success) {
+
+            document.getElementById(
+                "enrollmentStudent"
+            ).value = "";
+
+            document.getElementById(
+                "enrollmentOffering"
+            ).value = "";
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        result.textContent =
+            "Could not enroll student.";
+
+    }
+
+}
+
+
+// ======================================
+// LOAD ENROLLMENT DATA
+// ======================================
+
+loadEnrollmentStudents();
+loadEnrollmentOfferings();
+
+// ======================================
+// LOAD SUBJECTS FOR OFFERING
+// ======================================
+
+async function loadOfferingSubjects() {
+
+    try {
+
+        const response =
+            await fetch("/get_subjects");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        const select =
+            document.getElementById(
+                "offeringSubject"
+            );
+
+        select.innerHTML =
+            '<option value="">Select Subject</option>';
+
+        data.subjects.forEach(subject => {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                subject.subject_id;
+
+            option.textContent =
+                subject.subject_name;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Subject loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// SHOW CUSTOM ACADEMIC YEAR
+
+function toggleCustomAcademicYear() {
+
+    const select =
+        document.getElementById("offeringAcademicYear");
+
+    const customInput =
+        document.getElementById("customAcademicYear");
+
+    if (select.value === "other") {
+
+        customInput.style.display = "block";
+
+    } else {
+
+        customInput.style.display = "none";
+        customInput.value = "";
+    }
+}
+
+
+// ======================================
+// CREATE CLASS OFFERING
+// ======================================
+
+async function createOffering() {
+
+    const subject =
+        document.getElementById(
+            "offeringSubject"
+        ).value;
+
+    const department =
+        document.getElementById(
+            "offeringDepartment"
+        ).value.trim();
+
+    const semester =
+        document.getElementById(
+            "offeringSemester"
+        ).value;
+
+    let academicYear =
+    document.getElementById("offeringAcademicYear").value;
+
+if (academicYear === "other") {
+
+    academicYear =
+        document.getElementById("customAcademicYear").value.trim();
+}
+    const result =
+        document.getElementById(
+            "offeringResult"
+        );
+
+
+    if (
+        !subject ||
+        !department ||
+        !semester ||
+        !academicYear
+    ) {
+
+        result.textContent =
+            "Please fill all offering details.";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/create_offering",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        subject_id:
+                            subject,
+
+                        department:
+                            department,
+
+                        semester:
+                            semester,
+
+                        academic_year:
+                            academicYear
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        result.textContent =
+            data.message;
+
+
+        if (data.success) {
+
+            document.getElementById(
+                "offeringDepartment"
+            ).value = "";
+
+            document.getElementById(
+                "offeringSemester"
+            ).value = "";
+
+            document.getElementById(
+                "offeringAcademicYear"
+            ).value = "";
+
+            document.getElementById(
+                "offeringSubject"
+            ).value = "";
+
+
+            setTimeout(() => {
+
+                location.reload();
+
+            }, 800);
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        result.textContent =
+            "Could not create class offering.";
+
+    }
+
+}
+
+
+// Load offering subjects
+loadOfferingSubjects();
+
+async function loadTeacherAttendance() {
+
+    const box =
+        document.getElementById("teacherAttendance");
+
+    box.innerHTML =
+        "Loading attendance...";
+
+    try {
+
+        const search =
+            document.getElementById(
+                "attendanceSearch"
+            ).value.trim();
+
+        const offering =
+            document.getElementById(
+                "attendanceSubject"
+            ).value;
+
+        const date =
+            document.getElementById(
+                "attendanceDate"
+            ).value;
+
+        const params =
+            new URLSearchParams();
+
+        if (search) {
+
+            params.append(
+                "search",
+                search
+            );
+
+        }
+
+        if (offering) {
+
+            params.append(
+                "offering_id",
+                offering
+            );
+
+        }
+
+        if (date) {
+
+            params.append(
+                "date",
+                date
+            );
+
+        }
+
+        const response =
+            await fetch(
+                "/teacher_attendance?" +
+                params.toString()
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            box.innerHTML = `
+                <p>
+                    ${data.message ||
+                    "Unable to load attendance."}
+                </p>
+            `;
+
+            return;
+        }
+
+        if (
+            !data.attendance ||
+            data.attendance.length === 0
+        ) {
+
+            box.innerHTML = `
+                <div class="empty-state">
+
+                    <div style="font-size:40px;">
+                        📭
+                    </div>
+
+                    <h3>
+                        No attendance yet
+                    </h3>
+
+                    <p>
+                        Attendance records will appear here
+                        after students mark attendance.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        let html = `
+
+            <div class="attendance-table-wrapper">
+
+                <table class="attendance-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Student</th>
+
+                            <th>USN</th>
+
+                            <th>Subject</th>
+
+                            <th>Date</th>
+
+                            <th>Time</th>
+
+                            <th>Status</th>
+
+                            <th>Classes Taken</th>
+
+                            <th>Attended</th>
+
+                            <th>Attendance %</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+        `;
+
+        data.attendance.forEach(row => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${row.name}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${row.usn}
+                    </td>
+
+                    <td>
+                        ${row.subject_name}
+                    </td>
+
+                    <td>
+                        ${row.attendance_date}
+                    </td>
+
+                    <td>
+                        ${row.attendance_time}
+                    </td>
+
+                    <td>
+                        <span class="${
+                            row.status === 'Present'
+                            ? 'status-present'
+                            : 'status-absent'
+                        }">
+                            ${row.status}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${row.classes_taken}
+                    </td>
+
+                    <td>
+                        ${row.classes_attended}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${row.attendance_percentage}%
+                        </strong>
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        html += `
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+        box.innerHTML =
+            html;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        box.innerHTML = `
+            <p>
+                Unable to load attendance records.
+            </p>
+        `;
+
+    }
+
+}
+
+
+async function loadTeacherStats() {
+
+    try {
+
+        const response = await fetch("/teacher_stats");
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        document.getElementById("totalRecords").textContent =
+            data.total_records;
+
+        document.getElementById("presentToday").textContent =
+            data.present_today;
+
+        document.getElementById("studentsPresent").textContent =
+            data.students_present;
+
+        document.getElementById("attendanceRate").textContent =
+            data.attendance_rate + "%";
+
+    } catch (error) {
+
+        console.error("Statistics error:", error);
+
+    }
+
+}
+
+
+async function applyAttendanceFilters() {
+    await loadTeacherAttendance();
+}
+
+function clearAttendanceFilters() {
+    document.getElementById("attendanceSearch").value = "";
+    document.getElementById("attendanceSubject").value = "";
+    document.getElementById("attendanceDate").value = "";
+
+    loadTeacherAttendance();
+}
+
+async function addSubject() {
+
+    const nameInput =
+        document.getElementById("newSubjectName");
+
+    const result =
+        document.getElementById("subjectResult");
+
+    const subjectName =
+        nameInput.value.trim();
+
+    if (!subjectName) {
+
+        result.textContent =
+            "Please enter a subject name.";
+
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/add_subject",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    subject_name: subjectName
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        result.textContent =
+            data.message;
+
+        if (data.success) {
+
+            nameInput.value = "";
+
+            setTimeout(() => {
+                location.reload();
+            }, 800);
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        result.textContent =
+            "Could not add subject.";
+    }
+}
+
+function exportAttendance() {
+
+    const search =
+        document.getElementById(
+            "attendanceSearch"
+        ).value.trim();
+
+    const offering =
+        document.getElementById(
+            "attendanceSubject"
+        ).value;
+
+    const date =
+        document.getElementById(
+            "attendanceDate"
+        ).value;
+
+    const params =
+        new URLSearchParams();
+
+    if (search) {
+
+        params.append(
+            "search",
+            search
+        );
+
+    }
+
+    if (offering) {
+
+        params.append(
+            "offering_id",
+            offering
+        );
+
+    }
+
+    if (date) {
+
+        params.append(
+            "date",
+            date
+        );
+
+    }
+
+    window.location.href =
+        "/export_attendance?" +
+        params.toString();
+}
+loadTeacherAttendance();
+loadTeacherStats();
+</script>
+
+<!-- ==========================================
+     STUDENT ENROLLMENT
+     ========================================== -->
+
+<div class="card" style="margin-top: 30px;">
+
+    <h2>Student Enrollment</h2>
+
+    <p>
+        Select a class to manage enrolled students.
+    </p>
+
+    <select id="enrollmentOffering"
+            onchange="loadEnrollmentStudents()">
+
+        <option value="">
+            Select Class
+        </option>
+
+        {% for o in offerings %}
+
+        <option value="{{ o.offering_id }}">
+            {{ o.subject_name }}
+            — {{ o.department }}
+            Sem {{ o.semester }}
+            ({{ o.academic_year }})
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <div id="enrollmentMessage"
+         style="margin-top: 15px;">
+    </div>
+
+    <div id="enrollmentStudents"
+         style="margin-top: 20px;">
+    </div>
+
+</div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}

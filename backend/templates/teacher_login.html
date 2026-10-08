@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card formcard small">
+
+    <div class="big">👨‍🏫</div>
+
+    <h2>Teacher Portal</h2>
+
+    <p>
+        Generate secure attendance sessions.
+    </p>
+
+    <input
+        id="email"
+        type="email"
+        placeholder="teacher@college.com"
+    >
+
+    <div class="password-box">
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Password"
+        >
+
+        <button
+            type="button"
+            class="password-toggle"
+            onclick="togglePassword()"
+            aria-label="Show password"
+        >
+            <svg
+                class="eye-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        </button>
+
+    </div>
+
+    <button onclick="teacherLogin()">
+        Enter Portal
+    </button>
+
+    <p style="text-align:center; margin-top:15px;">
+        Don't have a teacher account?
+        <a
+            href="/teacher_register"
+            style="color:#4b7bec; text-decoration:none; font-weight:bold;"
+        >
+            Register here
+        </a>
+    </p>
+
+    <p id="result"></p>
+
+</div>
+
+{% endblock %}

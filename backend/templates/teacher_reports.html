@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block title %}Reports | SmartAttend{% endblock %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+
+                <div class="teacher-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="teacher-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="teacher-brand-subtitle">
+                        Teacher Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="teacher-menu">
+
+                <a href="/teacher_dashboard">
+    🏠 Dashboard
+</a>
+
+<a href="/teacher_subjects">
+    📚 Subjects
+</a>
+
+<a href="/teacher_offerings">
+    🏫 Class Offerings
+</a>
+
+<a href="/teacher_students">
+    👥 Students
+</a>
+
+<a href="/teacher_qr">
+    📷 Generate QR
+</a>
+
+<a href="/teacher_attendance_page">
+    📋 Attendance
+</a>
+
+<a href="/teacher_reports" class="active">
+    📊 Reports
+</a>
+
+<a href="/logout" class="logout">
+    🚪 Logout
+</a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="teacher-main">
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Attendance Reports
+                </h1>
+
+                <p>
+                    View attendance statistics and export class reports.
+                </p>
+
+            </div>
+
+
+            <!-- FILTER -->
+            <div class="teacher-content-card">
+
+                <h2>📊 Report Filters</h2>
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:1fr 1fr;
+                    gap:14px;
+                    margin-top:20px;
+                ">
+
+                    <select
+                        id="reportOffering"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+                        <option value="">
+                            Select Class Offering
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        type="button"
+                        class="teacher-btn"
+                        onclick="loadReport()"
+                    >
+                        🔍 Generate Report
+                    </button>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="teacher-btn secondary"
+                    onclick="exportReport()"
+                    style="margin-top:14px;"
+                >
+                    📥 Export CSV
+                </button>
+
+
+                <p
+                    id="reportResult"
+                    style="
+                        margin-top:12px;
+                        color:#94a3b8;
+                    "
+                ></p>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+            <div class="teacher-card-grid">
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Total Records
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="reportTotalRecords"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Students Present
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="reportStudentsPresent"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Attendance Rate
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="reportAttendanceRate"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Report Status
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="reportStatus"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- REPORT INFORMATION -->
+            <div class="teacher-content-card">
+
+                <h2>
+                    📈 Attendance Report
+                </h2>
+
+                <p
+                    id="reportInfo"
+                    style="
+                        color:#94a3b8;
+                        line-height:1.7;
+                    "
+                >
+                    Select a class offering to view its attendance report.
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+
+// ======================================
+// LOAD OFFERINGS
+// ======================================
+
+async function loadReportOfferings() {
+
+    const select =
+        document.getElementById(
+            "reportOffering"
+        );
+
+
+    try {
+
+        const response =
+            await fetch("/get_offerings");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+            return;
+        }
+
+
+        select.innerHTML =
+            '<option value="">Select Class Offering</option>';
+
+
+        data.offerings.forEach(offering => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                offering.offering_id;
+
+
+            option.textContent =
+                `${offering.subject_name} — ${offering.department} Sem ${offering.semester} (${offering.academic_year})`;
+
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Report offering error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ======================================
+// LOAD REPORT
+// ======================================
+
+async function loadReport() {
+
+    const offeringId =
+        document.getElementById(
+            "reportOffering"
+        ).value;
+
+
+    const result =
+        document.getElementById(
+            "reportResult"
+        );
+
+
+    if (!offeringId) {
+
+        result.textContent =
+            "Please select a class offering.";
+
+        return;
+
+    }
+
+
+    result.textContent =
+        "Generating report...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/teacher_stats?offering_id=${offeringId}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            result.textContent =
+                data.message ||
+                "Unable to generate report.";
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "reportTotalRecords"
+        ).textContent =
+            data.total_records ?? 0;
+
+
+        document.getElementById(
+            "reportStudentsPresent"
+        ).textContent =
+            data.students_present ?? 0;
+
+
+        document.getElementById(
+            "reportAttendanceRate"
+        ).textContent =
+            (data.attendance_rate ?? 0) + "%";
+
+
+        document.getElementById(
+            "reportStatus"
+        ).textContent =
+            "Ready";
+
+
+        document.getElementById(
+            "reportInfo"
+        ).textContent =
+            "Attendance report generated successfully for the selected class offering.";
+
+
+        result.textContent =
+            "Report generated successfully.";
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Report error:",
+            error
+        );
+
+        result.textContent =
+            "Error generating report.";
+
+    }
+
+}
+
+
+
+// ======================================
+// EXPORT REPORT
+// ======================================
+
+function exportReport() {
+
+    const offeringId =
+        document.getElementById(
+            "reportOffering"
+        ).value;
+
+
+    if (!offeringId) {
+
+        document.getElementById(
+            "reportResult"
+        ).textContent =
+            "Please select a class offering first.";
+
+        return;
+
+    }
+
+
+    window.location.href =
+        `/export_attendance?offering_id=${offeringId}`;
+
+}
+
+
+
+// ======================================
+// INITIAL LOAD
+// ======================================
+
+loadReportOfferings();
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}My Attendance{% endblock %}
+
+{% block content %}
+
+<div class="student-ui">
+
+    <div class="student-layout">
+
+        <aside class="student-sidebar">
+
+            <div class="student-brand">
+
+                <div class="student-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="student-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="student-brand-subtitle">
+                        Student Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="student-menu">
+
+                <a href="/dashboard">
+                    🏠 Dashboard
+                </a>
+
+                <a href="/student_scan">
+                    📷 Scan Attendance
+                </a>
+
+                <a href="/student_attendance" class="active">
+                    📋 My Attendance
+                </a>
+
+                <a href="/student_subjects">
+                    📊 Subjects
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="student-main">
+
+            <div class="student-page-header">
+
+                <h1>
+                    My Attendance 📋
+                </h1>
+
+                <p>
+                    View your attendance records.
+                </p>
+
+            </div>
+
+
+            <div class="student-content-card">
+
+                <div class="student-attendance-header">
+
+                    <div>
+                        <h2>
+                            Attendance Records
+                        </h2>
+
+                        <p>
+                            Your latest attendance history.
+                        </p>
+                    </div>
+
+                    <div
+                        id="attendancePercentage"
+                        class="student-big-percentage">
+                        --%
+                    </div>
+
+                </div>
+
+
+                <div id="attendanceHistory">
+                    Loading...
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function loadPercentage() {
+
+    const percentage =
+        document.getElementById(
+            "attendancePercentage"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                "/attendance_percentage"
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            percentage.textContent =
+                data.percentage + "%";
+
+        } else {
+
+            percentage.textContent =
+                "0%";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        percentage.textContent =
+            "0%";
+
+    }
+
+}
+
+
+async function loadAttendance() {
+
+    const container =
+        document.getElementById(
+            "attendanceHistory"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                "/attendance_history"
+            );
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.success ||
+            !data.records ||
+            data.records.length === 0
+        ) {
+
+            container.innerHTML =
+                "<p>No attendance records yet.</p>";
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        data.records.forEach(function(record) {
+
+            html += `
+
+                <div class="student-attendance-row">
+
+                    <div>
+
+                        <strong>
+                            ${record.subject_name}
+                        </strong>
+
+                        <small>
+                            ${record.attendance_date}
+                            ·
+                            ${record.attendance_time}
+                        </small>
+
+                    </div>
+
+                    <span class="student-present">
+                        ${record.status}
+                    </span>
+
+                </div>
+
+            `;
+
+        });
+
+
+        container.innerHTML =
+            html;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML =
+            "<p>Could not load attendance records.</p>";
+
+    }
+
+}
+
+
+loadPercentage();
+
+loadAttendance();
+
+</script>
+
+{% endblock %}

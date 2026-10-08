@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="student-ui">
+
+    <div class="student-layout">
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="student-sidebar">
+
+            <div class="student-brand">
+
+                <div class="student-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="student-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="student-brand-subtitle">
+                        Student Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="student-menu">
+
+                <a href="/dashboard" class="active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="/student_scan">
+                    📷 Scan Attendance
+                </a>
+
+                <a href="/student_attendance">
+                    📋 My Attendance
+                </a>
+
+                <a href="/student_subjects">
+                    📊 Subjects
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="student-main">
+
+            <div class="student-page-header">
+
+                <h1>
+                    Hello, {{ student.name }} 👋
+                </h1>
+
+                <p>
+                    {{ student.department }} · Semester {{ student.semester }}
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 STAT CARDS
+            ========================== -->
+
+            <div class="student-card-grid">
+
+                <div class="student-stat-card">
+
+                    <div class="student-stat-label">
+                        Attendance
+                    </div>
+
+                    <div
+                        class="student-stat-value"
+                        id="percentage">
+                        --%
+                    </div>
+
+                </div>
+
+
+                <div class="student-stat-card">
+
+                    <div class="student-stat-label">
+                        Student ID
+                    </div>
+
+                    <div class="student-stat-value">
+                        {{ student.usn }}
+                    </div>
+
+                </div>
+
+
+                <div class="student-stat-card">
+
+                    <div class="student-stat-label">
+                        Verification
+                    </div>
+
+                    <div class="student-stat-value">
+                        QR + GPS + Face
+                    </div>
+
+                    <div class="student-face-status">
+
+                        {% if face_available %}
+                            ● Face ready
+                        {% else %}
+                            ● Face module unavailable
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 QUICK ACTIONS
+            ========================== -->
+
+            <div class="student-content-card">
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+                <p>
+                    Choose what you want to do.
+                </p>
+
+
+                <div class="student-action-grid">
+
+                    <a
+                        href="/student_scan"
+                        class="student-action-card">
+
+                        <div class="student-action-icon">
+                            📷
+                        </div>
+
+                        <div>
+                            <strong>
+                                Scan Attendance
+                            </strong>
+
+                            <span>
+                                Scan QR and complete verification.
+                            </span>
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/student_attendance"
+                        class="student-action-card">
+
+                        <div class="student-action-icon">
+                            📋
+                        </div>
+
+                        <div>
+                            <strong>
+                                My Attendance
+                            </strong>
+
+                            <span>
+                                View your attendance records.
+                            </span>
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/student_subjects"
+                        class="student-action-card">
+
+                        <div class="student-action-icon">
+                            📊
+                        </div>
+
+                        <div>
+                            <strong>
+                                Subjects
+                            </strong>
+
+                            <span>
+                                Check attendance subject-wise.
+                            </span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 RECENT ATTENDANCE
+            ========================== -->
+
+            <div class="student-content-card">
+
+                <div class="student-section-heading">
+
+                    <div>
+                        <h2>
+                            Recent Attendance
+                        </h2>
+
+                        <p>
+                            Your latest attendance records.
+                        </p>
+                    </div>
+
+                    <a
+                        href="/student_attendance"
+                        class="student-small-link">
+                        View all →
+                    </a>
+
+                </div>
+
+
+                <div id="recentAttendance">
+                    Loading...
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function loadPercentage() {
+
+    const percentage =
+        document.getElementById("percentage");
+
+    try {
+
+        const response =
+            await fetch("/attendance_percentage");
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            percentage.textContent =
+                data.percentage + "%";
+
+        } else {
+
+            percentage.textContent =
+                "0%";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        percentage.textContent =
+            "0%";
+
+    }
+
+}
+
+
+async function loadRecentAttendance() {
+
+    const container =
+        document.getElementById("recentAttendance");
+
+    try {
+
+        const response =
+            await fetch("/attendance_history");
+
+        const data =
+            await response.json();
+
+        if (
+            !data.success ||
+            !data.records ||
+            data.records.length === 0
+        ) {
+
+            container.innerHTML =
+                "<p>No attendance records yet.</p>";
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        data.records
+            .slice(0, 3)
+            .forEach(function(record) {
+
+                html += `
+
+                    <div class="student-attendance-row">
+
+                        <div>
+
+                            <strong>
+                                ${record.subject_name}
+                            </strong>
+
+                            <small>
+                                ${record.attendance_date}
+                                ·
+                                ${record.attendance_time}
+                            </small>
+
+                        </div>
+
+                        <span class="student-present">
+                            ${record.status}
+                        </span>
+
+                    </div>
+
+                `;
+
+            });
+
+
+        container.innerHTML = html;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML =
+            "<p>Could not load attendance.</p>";
+
+    }
+
+}
+
+
+loadPercentage();
+
+loadRecentAttendance();
+
+</script>
+
+{% endblock %}

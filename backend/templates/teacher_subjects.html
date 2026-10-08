@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects | SmartAttend{% endblock %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+
+                <div class="teacher-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="teacher-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="teacher-brand-subtitle">
+                        Teacher Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="teacher-menu">
+
+                <a href="/teacher_dashboard">
+                    🏠 Dashboard
+                </a>
+
+                <a href="/teacher_subjects" class="active">
+                    📚 Subjects
+                </a>
+
+                <a href="#">
+                    🏫 Class Offerings
+                </a>
+
+                <a href="#">
+                    👥 Students
+                </a>
+
+                <a href="#">
+                    📷 Generate QR
+                </a>
+
+                <a href="#">
+                    📋 Attendance
+                </a>
+
+                <a href="#">
+                    📊 Reports
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="teacher-main">
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Subjects
+                </h1>
+
+                <p>
+                    Manage the subjects available in your SmartAttend system.
+                </p>
+
+            </div>
+
+
+            <!-- ADD SUBJECT -->
+            <div class="teacher-content-card">
+
+                <h2>Add New Subject</h2>
+
+                <p>
+                    Create a subject that can be used for attendance sessions.
+                </p>
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:2fr 1fr auto;
+                    gap:12px;
+                    margin-top:20px;
+                ">
+
+                    <input
+                        type="text"
+                        id="subjectName"
+                        placeholder="Subject name"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+                    <input
+                        type="text"
+                        id="subjectCode"
+                        placeholder="Subject code"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+                    <button
+                        class="teacher-btn"
+                        onclick="addSubject()"
+                    >
+                        + Add Subject
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBJECT LIST -->
+            <div class="teacher-content-card">
+
+                <h2>Your Subjects</h2>
+
+                <div
+                    id="subjectsContainer"
+                    style="margin-top:20px;"
+                >
+
+                    <p style="color:#94a3b8;">
+                        Loading subjects...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function loadSubjects() {
+
+    try {
+
+        const response =
+            await fetch("/get_subjects");
+
+        const data =
+            await response.json();
+
+        const container =
+            document.getElementById("subjectsContainer");
+
+        if (!data.success) {
+
+            container.innerHTML =
+                "<p style='color:#fca5a5;'>Unable to load subjects.</p>";
+
+            return;
+        }
+
+
+        if (!data.subjects || data.subjects.length === 0) {
+
+            container.innerHTML =
+                "<p style='color:#94a3b8;'>No subjects added yet.</p>";
+
+            return;
+        }
+
+
+        let html = "";
+
+        data.subjects.forEach(subject => {
+
+            html += `
+
+                <div class="teacher-stat-card"
+                     style="
+                        margin-bottom:12px;
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                     ">
+
+                    <div>
+
+                        <div style="
+                            font-size:16px;
+                            font-weight:700;
+                        ">
+                            ${subject.subject_name}
+                        </div>
+
+                        <div style="
+                            color:#94a3b8;
+                            margin-top:5px;
+                            font-size:13px;
+                        ">
+                            ${subject.subject_code || "No code"}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+        container.innerHTML = html;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Subject loading error:",
+            error
+        );
+
+        document.getElementById(
+            "subjectsContainer"
+        ).innerHTML =
+            "<p style='color:#fca5a5;'>Error loading subjects.</p>";
+
+    }
+
+}
+
+
+async function addSubject() {
+
+    const name =
+        document.getElementById("subjectName").value.trim();
+
+    const code =
+        document.getElementById("subjectCode").value.trim();
+
+
+    if (!name) {
+
+        alert("Please enter the subject name.");
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch("/add_subject", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    subject_name: name,
+                    subject_code: code
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (data.success) {
+
+            alert("Subject added successfully.");
+
+            document.getElementById(
+                "subjectName"
+            ).value = "";
+
+            document.getElementById(
+                "subjectCode"
+            ).value = "";
+
+            loadSubjects();
+
+        }
+
+        else {
+
+            alert(
+                data.message ||
+                "Unable to add subject."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Add subject error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while adding the subject."
+        );
+
+    }
+
+}
+
+
+loadSubjects();
+
+</script>
+
+{% endblock %}

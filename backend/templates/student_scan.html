@@ -1,0 +1,582 @@
+{% extends "base.html" %}
+
+{% block title %}Scan Attendance{% endblock %}
+
+{% block content %}
+
+<div class="student-ui">
+
+    <div class="student-layout">
+
+        <aside class="student-sidebar">
+
+            <div class="student-brand">
+
+                <div class="student-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="student-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="student-brand-subtitle">
+                        Student Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="student-menu">
+
+                <a href="/dashboard">
+                    🏠 Dashboard
+                </a>
+
+                <a href="/student_scan" class="active">
+                    📷 Scan Attendance
+                </a>
+
+                <a href="/student_attendance">
+                    📋 My Attendance
+                </a>
+
+                <a href="/student_subjects">
+                    📊 Subjects
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="student-main">
+
+            <div class="student-page-header">
+
+                <h1>
+                    Scan Attendance 📷
+                </h1>
+
+                <p>
+                    Scan your teacher's QR code to begin verification.
+                </p>
+
+            </div>
+
+
+            <div class="student-content-card student-scan-card">
+
+                <h2>
+                    📷 Scan Teacher QR
+                </h2>
+
+                <p id="scanResult">
+                    Camera starting...
+                </p>
+
+                <div
+                    id="reader"
+                    class="student-qr-reader">
+                </div>
+
+
+                <!-- =========================
+                     FACE VERIFICATION
+                ========================== -->
+
+                <div
+                    id="faceSection"
+                    class="student-face-section"
+                    style="display:none;"
+                >
+
+                    <h2>
+                        👤 Face Verification
+                    </h2>
+
+                    <p>
+                        Look directly at the camera and capture your face.
+                    </p>
+
+
+                    <video
+                        id="faceVideo"
+                        autoplay
+                        playsinline
+                        muted
+                        class="student-face-video">
+                    </video>
+
+
+                    <canvas
+                        id="faceCanvas"
+                        style="display:none;">
+                    </canvas>
+
+
+                    <button
+                        id="captureFace"
+                        type="button"
+                        class="student-primary-button"
+                        style="display:none;">
+
+                        📸 Capture Face
+
+                    </button>
+
+
+                    <p id="faceResult"></p>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+
+let busy = false;
+
+let currentQR = null;
+
+let currentLatitude = null;
+
+let currentLongitude = null;
+
+let faceStream = null;
+
+
+const result =
+    document.getElementById("scanResult");
+
+const faceSection =
+    document.getElementById("faceSection");
+
+const faceVideo =
+    document.getElementById("faceVideo");
+
+const faceCanvas =
+    document.getElementById("faceCanvas");
+
+const captureButton =
+    document.getElementById("captureFace");
+
+const faceResult =
+    document.getElementById("faceResult");
+
+
+/* =========================
+   QR SCANNED
+========================= */
+
+async function scanned(qrToken) {
+
+    if (busy) {
+        return;
+    }
+
+    busy = true;
+
+    currentQR = qrToken;
+
+    result.textContent =
+        "QR detected. Checking your location...";
+
+
+    if (!navigator.geolocation) {
+
+        result.textContent =
+            "Geolocation is not supported.";
+
+        busy = false;
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position) {
+
+            currentLatitude =
+                position.coords.latitude;
+
+            currentLongitude =
+                position.coords.longitude;
+
+
+            result.textContent =
+                "Location received. Starting face verification...";
+
+
+            try {
+
+                await qrScanner.stop();
+
+            } catch (error) {
+
+                console.log(
+                    "QR scanner already stopped."
+                );
+
+            }
+
+
+            await startFaceCamera();
+
+        },
+
+
+        function(error) {
+
+            console.error(error);
+
+            result.textContent =
+                "Please allow location access.";
+
+            busy = false;
+
+        },
+
+
+        {
+            enableHighAccuracy: false,
+            timeout: 1000,
+            maximumAge: 30000
+        }
+
+    );
+
+}
+
+
+/* =========================
+   FACE CAMERA
+========================= */
+
+async function startFaceCamera() {
+
+    faceSection.style.display =
+        "block";
+
+    result.textContent =
+        "Opening front camera...";
+
+
+    try {
+
+        faceStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: "user"
+                },
+
+                audio: false
+
+            });
+
+
+        faceVideo.srcObject =
+            faceStream;
+
+
+        captureButton.style.display =
+            "block";
+
+
+        faceResult.textContent =
+            "Camera ready. Look at the camera.";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        faceResult.textContent =
+            "Camera could not be opened. Please allow camera access.";
+
+        busy = false;
+
+    }
+
+}
+
+
+/* =========================
+   CAPTURE FACE
+========================= */
+
+captureButton.onclick =
+    async function() {
+
+        if (!faceStream) {
+
+            faceResult.textContent =
+                "Camera is not ready.";
+
+            return;
+
+        }
+
+
+        faceResult.textContent =
+            "Capturing face...";
+
+
+        faceCanvas.width = 640;
+        faceCanvas.height = 480;
+
+
+        const context =
+            faceCanvas.getContext("2d");
+
+
+        context.drawImage(
+            faceVideo,
+            0,
+            0,
+            faceCanvas.width,
+            faceCanvas.height
+        );
+
+
+        const faceImage =
+            faceCanvas.toDataURL(
+                "image/jpeg",
+                0.70
+            );
+
+
+        faceResult.textContent =
+            "Verifying your face...";
+
+
+        captureButton.disabled =
+            true;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/mark_attendance",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            qr_token:
+                                currentQR,
+
+                            latitude:
+                                currentLatitude,
+
+                            longitude:
+                                currentLongitude,
+
+                            face_image:
+                                faceImage
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            faceResult.textContent =
+                data.message;
+
+
+            if (data.success) {
+
+                result.textContent =
+                    "🎉 Attendance verification completed.";
+
+            }
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            faceResult.textContent =
+                "Something went wrong. Please try again.";
+
+        }
+
+
+        stopFaceCamera();
+
+        captureButton.disabled =
+            false;
+
+        busy = false;
+
+    };
+
+
+/* =========================
+   STOP FACE CAMERA
+========================= */
+
+function stopFaceCamera() {
+
+    if (!faceStream) {
+        return;
+    }
+
+
+    faceStream
+        .getTracks()
+        .forEach(function(track) {
+
+            track.stop();
+
+        });
+
+
+    faceStream = null;
+
+    faceVideo.srcObject = null;
+
+}
+
+
+/* =========================
+   QR CAMERA
+========================= */
+
+const qrScanner =
+    new Html5Qrcode("reader");
+
+
+Html5Qrcode.getCameras()
+
+    .then(function(cameras) {
+
+        if (!cameras || cameras.length === 0) {
+
+            result.textContent =
+                "No camera was found.";
+
+            return;
+
+        }
+
+
+        let selectedCamera =
+            cameras[0].id;
+
+
+        for (
+            let i = 0;
+            i < cameras.length;
+            i++
+        ) {
+
+            const label =
+                cameras[i].label.toLowerCase();
+
+
+            if (
+                label.includes("back") ||
+                label.includes("rear") ||
+                label.includes("environment")
+            ) {
+
+                selectedCamera =
+                    cameras[i].id;
+
+                break;
+
+            }
+
+        }
+
+
+        result.textContent =
+            "Camera ready. Point it at your teacher's QR.";
+
+
+        qrScanner.start(
+
+            selectedCamera,
+
+            {
+
+                fps: 10,
+
+                qrbox: {
+                    width: 250,
+                    height: 250
+                }
+
+            },
+
+            function(decodedText) {
+
+                scanned(decodedText);
+
+            },
+
+            function(errorMessage) {
+
+                // QR not detected yet.
+
+            }
+
+        )
+
+        .catch(function(error) {
+
+            console.error(error);
+
+            result.textContent =
+                "Camera could not be started. Please allow camera access.";
+
+        });
+
+    })
+
+
+    .catch(function(error) {
+
+        console.error(error);
+
+        result.textContent =
+            "Camera permission is required.";
+
+    });
+
+</script>
+
+{% endblock %}

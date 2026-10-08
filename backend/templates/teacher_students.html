@@ -1,0 +1,762 @@
+{% extends "base.html" %}
+
+{% block title %}Students | SmartAttend{% endblock %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+
+                <div class="teacher-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="teacher-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="teacher-brand-subtitle">
+                        Teacher Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="teacher-menu">
+
+                <a href="/teacher_dashboard">
+    🏠 Dashboard
+</a>
+
+<a href="/teacher_subjects">
+    📚 Subjects
+</a>
+
+<a href="/teacher_offerings">
+    🏫 Class Offerings
+</a>
+
+<a href="/teacher_students" class="active">
+    👥 Students
+</a>
+
+<a href="/teacher_qr">
+    📷 Generate QR
+</a>
+
+<a href="/teacher_attendance_page">
+    📋 Attendance
+</a>
+
+<a href="/teacher_reports">
+    📊 Reports
+</a>
+
+<a href="/logout" class="logout">
+    🚪 Logout
+</a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="teacher-main">
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Students
+                </h1>
+
+                <p>
+                    Enroll students into your class offerings.
+                </p>
+
+            </div>
+
+
+            <!-- ENROLL STUDENT -->
+            <div class="teacher-content-card">
+
+                <h2>👥 Enroll Student</h2>
+
+                <p>
+                    Select a student and the class they should be enrolled in.
+                </p>
+
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:1fr 1fr;
+                    gap:14px;
+                    margin-top:20px;
+                ">
+
+                    <!-- STUDENT -->
+                    <select
+                        id="enrollmentStudent"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+                        <option value="">
+                            Select Student
+                        </option>
+
+                    </select>
+
+
+                    <!-- CLASS OFFERING -->
+                    <select
+                        id="enrollmentOffering"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+                        <option value="">
+                            Select Class Offering
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="teacher-btn"
+                    onclick="enrollStudent()"
+                    style="margin-top:16px;"
+                >
+                    ＋ Enroll Student
+                </button>
+
+
+                <p
+                    id="enrollmentResult"
+                    style="
+                        margin-top:12px;
+                        color:#94a3b8;
+                    "
+                ></p>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+            <div class="teacher-content-card">
+
+                <h2>How Enrollment Works</h2>
+
+                <p style="
+                    color:#94a3b8;
+                    line-height:1.7;
+                ">
+
+                    Student registration creates the student's account.
+                    Enrollment connects that student to a particular
+                    class offering. Once enrolled, the student can be
+                    included in that class's attendance records.
+
+                </p>
+
+            </div>
+
+
+            <!-- CURRENT STUDENTS -->
+            <div class="teacher-content-card">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                ">
+
+                    <div>
+
+                        <h2>
+                            Available Students
+                        </h2>
+
+                        <p>
+                            Students registered in the system.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="teacher-btn secondary"
+                        onclick="loadStudents()"
+                    >
+                        🔄 Refresh
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="studentsContainer"
+                    style="margin-top:20px;"
+                >
+
+                    <p style="color:#94a3b8;">
+                        Loading students...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+
+// ======================================
+// LOAD STUDENTS
+// ======================================
+
+async function loadStudents() {
+
+    const container =
+        document.getElementById(
+            "studentsContainer"
+        );
+
+
+    container.innerHTML =
+        "<p style='color:#94a3b8;'>Loading...</p>";
+
+
+    try {
+
+        const response =
+            await fetch("/get_students");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            container.innerHTML =
+                "<p style='color:#fca5a5;'>Unable to load students.</p>";
+
+            return;
+
+        }
+
+
+        if (
+            !data.students ||
+            data.students.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:35px;
+                    color:#94a3b8;
+                ">
+
+                    <div style="font-size:40px;">
+                        👥
+                    </div>
+
+                    <h3 style="color:#f8fafc;">
+                        No students found
+                    </h3>
+
+                    <p>
+                        Registered students will appear here.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        let html = `
+
+            <div class="teacher-table-wrapper">
+
+                <table class="teacher-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>USN</th>
+
+                            <th>Email</th>
+
+                            <th>Department</th>
+
+                            <th>Semester</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+        `;
+
+
+        data.students.forEach(student => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${student.name}
+                    </td>
+
+                    <td>
+                        ${student.usn}
+                    </td>
+
+                    <td>
+                        ${student.email}
+                    </td>
+
+                    <td>
+                        ${student.department}
+                    </td>
+
+                    <td>
+                        ${student.semester}
+                    </td>
+
+                    <td>
+
+    <button
+        class="teacher-btn danger"
+        onclick="removeStudentFromOffering(${student.student_id}, '${student.name}')"
+    >
+        Remove
+    </button>
+
+</td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        container.innerHTML = html;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Student loading error:",
+            error
+        );
+
+        container.innerHTML =
+            "<p style='color:#fca5a5;'>Error loading students.</p>";
+
+    }
+
+}
+
+
+async function removeStudentFromOffering(studentId, studentName) {
+
+    const offeringSelect =
+        document.getElementById("enrollmentOffering");
+
+    const offeringId =
+        offeringSelect.value;
+
+
+    if (!offeringId) {
+
+        alert("Please select a class offering first.");
+
+        return;
+
+    }
+
+
+
+    const confirmed =
+        confirm(
+            "Remove " +
+            studentName +
+            " from this class?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/remove_student_from_offering",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        student_id:
+                            studentId,
+
+                        offering_id:
+                            offeringId
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.success) {
+
+            alert(
+                "Student removed from this class successfully."
+            );
+
+            loadStudents();
+
+        }
+
+        else {
+
+            alert(
+                data.message ||
+                "Could not remove student."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Remove student error:",
+            error
+        );
+
+        alert(
+            "Error removing student."
+        );
+
+    }
+
+}
+
+
+// ======================================
+// LOAD STUDENTS INTO ENROLLMENT DROPDOWN
+// ======================================
+
+async function loadEnrollmentStudents() {
+
+    try {
+
+        const response =
+            await fetch("/get_students");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+            return;
+        }
+
+
+        const select =
+            document.getElementById(
+                "enrollmentStudent"
+            );
+
+
+        select.innerHTML =
+            '<option value="">Select Student</option>';
+
+
+        data.students.forEach(student => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                student.student_id;
+
+
+            option.textContent =
+                `${student.name} — ${student.usn}`;
+
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Enrollment student loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ======================================
+// LOAD OFFERINGS INTO DROPDOWN
+// ======================================
+
+async function loadEnrollmentOfferings() {
+
+    try {
+
+        const response =
+            await fetch("/get_offerings");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+            return;
+        }
+
+
+        const select =
+            document.getElementById(
+                "enrollmentOffering"
+            );
+
+
+        select.innerHTML =
+            '<option value="">Select Class Offering</option>';
+
+
+        data.offerings.forEach(offering => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                offering.offering_id;
+
+
+            option.textContent =
+                `${offering.subject_name} — ${offering.department} Sem ${offering.semester} (${offering.academic_year})`;
+
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Enrollment offering loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ======================================
+// ENROLL STUDENT
+// ======================================
+
+async function enrollStudent() {
+
+    const student =
+        document.getElementById(
+            "enrollmentStudent"
+        ).value;
+
+
+    const offering =
+        document.getElementById(
+            "enrollmentOffering"
+        ).value;
+
+
+    const result =
+        document.getElementById(
+            "enrollmentResult"
+        );
+
+
+    if (!student || !offering) {
+
+        result.textContent =
+            "Please select a student and class offering.";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/enroll_student",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        student_id:
+                            student,
+
+                        offering_id:
+                            offering
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        result.textContent =
+            data.message;
+
+
+        if (data.success) {
+
+            document.getElementById(
+                "enrollmentStudent"
+            ).value = "";
+
+
+            document.getElementById(
+                "enrollmentOffering"
+            ).value = "";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        result.textContent =
+            "Could not enroll student.";
+
+    }
+
+}
+
+
+
+// ======================================
+// INITIAL LOAD
+// ======================================
+
+loadStudents();
+
+loadEnrollmentStudents();
+
+loadEnrollmentOfferings();
+
+</script>
+
+{% endblock %}

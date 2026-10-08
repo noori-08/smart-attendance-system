@@ -1,0 +1,537 @@
+{% extends "base.html" %}
+
+{% block title %}Generate QR | SmartAttend{% endblock %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+
+                <div class="teacher-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="teacher-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="teacher-brand-subtitle">
+                        Teacher Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="teacher-menu">
+
+                <a href="/teacher_dashboard">
+                    🏠 Dashboard
+                </a>
+
+                <a href="/teacher_subjects">
+                    📚 Subjects
+                </a>
+
+                <a href="/teacher_offerings">
+                    🏫 Class Offerings
+                </a>
+
+                <a href="/teacher_students">
+                    👥 Students
+                </a>
+
+                <a href="/teacher_qr" class="active">
+                    📷 Generate QR
+                </a>
+
+                <a href="/teacher_attendance_page">
+                    📋 Attendance
+                </a>
+
+                <a href="/teacher_reports">
+                    📊 Reports
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="teacher-main">
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Generate Attendance QR
+                </h1>
+
+                <p>
+                    Generate a dynamic QR code for your selected class.
+                </p>
+
+            </div>
+
+
+            <!-- QR GENERATION -->
+            <div class="teacher-content-card">
+
+                <h2>📷 Create Attendance Session</h2>
+
+                <p>
+                    Select a class offering and generate a temporary QR code.
+                </p>
+
+
+                <select
+                    id="qrOffering"
+                    style="
+                        width:100%;
+                        margin-top:20px;
+                        padding:13px;
+                        border-radius:9px;
+                        border:1px solid rgba(255,255,255,0.12);
+                        background:#0f172a;
+                        color:white;
+                    "
+                >
+
+                    <option value="">
+                        Select Class Offering
+                    </option>
+
+                </select>
+
+
+                <button
+                    type="button"
+                    class="teacher-btn"
+                    onclick="generateTeacherQR()"
+                    style="margin-top:16px;"
+                >
+                    🔐 Generate Dynamic QR
+                </button>
+
+
+                <p
+                    id="qrResult"
+                    style="
+                        margin-top:14px;
+                        color:#94a3b8;
+                    "
+                ></p>
+
+            </div>
+
+
+            <!-- QR DISPLAY -->
+            <div
+                class="teacher-content-card"
+                id="qrDisplayCard"
+                style="display:none;"
+            >
+
+                <div style="text-align:center;">
+
+                    <h2>
+                        📷 Attendance QR
+                    </h2>
+
+                    <p style="color:#94a3b8;">
+                        Ask students to scan this QR code.
+                    </p>
+
+
+                    <div style="
+                        margin:25px auto;
+                        width:280px;
+                        min-height:280px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        background:white;
+                        border-radius:16px;
+                        padding:15px;
+                    ">
+
+                        <img
+                            id="qrImage"
+                            src=""
+                            alt="Attendance QR Code"
+                            style="
+                                width:250px;
+                                height:250px;
+                                object-fit:contain;
+                                display:block;
+                            "
+                        >
+
+                    </div>
+
+
+                    <div
+                        id="qrTimer"
+                        style="
+                            font-size:18px;
+                            font-weight:700;
+                            color:#f8fafc;
+                            margin-top:15px;
+                        "
+                    >
+                        QR Active
+                    </div>
+
+
+                    <p style="
+                        color:#94a3b8;
+                        margin-top:10px;
+                    ">
+                        This QR is valid only for the current attendance session.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+            <div class="teacher-content-card">
+
+                <h2>
+                    How Dynamic QR Attendance Works
+                </h2>
+
+                <p style="
+                    color:#94a3b8;
+                    line-height:1.7;
+                ">
+
+                    The teacher generates a QR code for a specific class
+                    session. The student scans the QR code and the system
+                    verifies the QR, GPS location and student identity
+                    before recording attendance.
+
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+
+// ======================================
+// LOAD CLASS OFFERINGS
+// ======================================
+
+async function loadQROfferings() {
+
+    const select =
+        document.getElementById("qrOffering");
+
+
+    try {
+
+        const response =
+            await fetch("/get_offerings");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            select.innerHTML =
+                '<option value="">Unable to load classes</option>';
+
+            return;
+        }
+
+
+        select.innerHTML =
+            '<option value="">Select Class Offering</option>';
+
+
+        data.offerings.forEach(function(offering) {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                offering.offering_id;
+
+
+            option.textContent =
+                `${offering.subject_name} — ${offering.department} Sem ${offering.semester} (${offering.academic_year})`;
+
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "QR offering loading error:",
+            error
+        );
+
+        select.innerHTML =
+            '<option value="">Error loading classes</option>';
+    }
+
+}
+
+
+
+// ======================================
+// QR COUNTDOWN TIMER
+// ======================================
+
+let qrCountdownTimer = null;
+
+
+
+// ======================================
+// GENERATE TEACHER QR
+// ======================================
+
+async function generateTeacherQR() {
+
+    const offeringId =
+        document.getElementById("qrOffering").value;
+
+
+    const result =
+        document.getElementById("qrResult");
+
+
+    const displayCard =
+        document.getElementById("qrDisplayCard");
+
+
+    const qrImage =
+        document.getElementById("qrImage");
+
+
+    const qrTimer =
+        document.getElementById("qrTimer");
+
+
+    // CHECK CLASS SELECTION
+
+    if (!offeringId) {
+
+        result.textContent =
+            "Please select a class offering.";
+
+        return;
+    }
+
+
+    result.textContent =
+        "Generating QR code...";
+
+
+    try {
+
+        // ======================================
+        // SEND REQUEST TO BACKEND
+        // ======================================
+
+        const response =
+            await fetch(
+                "/generate_qr",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        offering_id:
+                            offeringId
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // ======================================
+        // CHECK BACKEND RESPONSE
+        // ======================================
+
+        if (!data.success) {
+
+            result.textContent =
+                data.message ||
+                "Unable to generate QR.";
+
+            return;
+        }
+
+
+        result.textContent =
+            "QR code generated successfully.";
+
+
+        // ======================================
+        // SHOW QR CARD
+        // ======================================
+
+        displayCard.style.display =
+            "block";
+
+
+        // ======================================
+        // LOAD NEW QR IMAGE
+        // ======================================
+
+        qrImage.src =
+            "/static/qr_codes/current_qr.png?t=" +
+            Date.now();
+
+
+        qrImage.style.display =
+            "block";
+
+
+        qrImage.style.opacity =
+            "1";
+
+
+        // ======================================
+        // STOP PREVIOUS TIMER
+        // ======================================
+
+        if (qrCountdownTimer) {
+
+            clearInterval(
+                qrCountdownTimer
+            );
+        }
+
+
+        // ======================================
+        // START 5 MINUTE COUNTDOWN
+        // ======================================
+
+        let remainingSeconds =
+            5 * 60;
+
+
+        function updateQRCountdown() {
+
+            const minutes =
+                Math.floor(
+                    remainingSeconds / 60
+                );
+
+
+            const seconds =
+                remainingSeconds % 60;
+
+
+            qrTimer.textContent =
+                "QR expires in " +
+                String(minutes).padStart(2, "0") +
+                ":" +
+                String(seconds).padStart(2, "0");
+
+
+            if (remainingSeconds <= 0) {
+
+                clearInterval(
+                    qrCountdownTimer
+                );
+
+
+                qrTimer.textContent =
+                    "QR expired";
+
+
+                qrImage.style.opacity =
+                    "0.4";
+
+
+                return;
+            }
+
+
+            remainingSeconds--;
+        }
+
+
+        // SHOW 05:00 IMMEDIATELY
+
+        updateQRCountdown();
+
+
+        // DECREASE EVERY SECOND
+
+        qrCountdownTimer =
+            setInterval(
+                updateQRCountdown,
+                1000
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "QR generation error:",
+            error
+        );
+
+        result.textContent =
+            "Error generating QR code.";
+    }
+
+}
+
+
+
+// ======================================
+// INITIAL LOAD
+// ======================================
+
+loadQROfferings();
+
+
+</script>
+
+{% endblock %}

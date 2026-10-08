@@ -1,0 +1,672 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance | SmartAttend{% endblock %}
+
+{% block content %}
+
+<div class="teacher-ui">
+
+    <div class="teacher-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="teacher-sidebar">
+
+            <div class="teacher-brand">
+                <div class="teacher-brand-icon">SA</div>
+
+                <div>
+                    <div class="teacher-brand-title">SmartAttend</div>
+                    <div class="teacher-brand-subtitle">Teacher Portal</div>
+                </div>
+            </div>
+
+            <nav class="teacher-menu">
+
+                <a href="/teacher_dashboard">
+    🏠 Dashboard
+</a>
+
+<a href="/teacher_subjects">
+    📚 Subjects
+</a>
+
+<a href="/teacher_offerings">
+    🏫 Class Offerings
+</a>
+
+<a href="/teacher_students">
+    👥 Students
+</a>
+
+<a href="/teacher_qr">
+    📷 Generate QR
+</a>
+
+<a href="/teacher_attendance_page" class="active">
+    📋 Attendance
+</a>
+
+<a href="/teacher_reports">
+    📊 Reports
+</a>
+
+<a href="/logout" class="logout">
+    🚪 Logout
+</a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="teacher-main">
+
+            <div class="teacher-page-header">
+
+                <h1>
+                    Attendance
+                </h1>
+
+                <p>
+                    View and monitor attendance for your classes.
+                </p>
+
+            </div>
+
+
+            <!-- FILTERS -->
+            <div class="teacher-content-card">
+
+                <h2>📋 Attendance Filters</h2>
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:1fr 1fr 1fr;
+                    gap:14px;
+                    margin-top:20px;
+                ">
+
+                    <select
+                        id="attendanceOffering"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+                        <option value="">
+                            Select Class Offering
+                        </option>
+
+                    </select>
+
+
+                    <input
+                        type="date"
+                        id="attendanceDate"
+                        style="
+                            padding:12px;
+                            border-radius:9px;
+                            border:1px solid rgba(255,255,255,0.12);
+                            background:#0f172a;
+                            color:white;
+                        "
+                    >
+
+
+                    <button
+                        type="button"
+                        class="teacher-btn"
+                        onclick="loadAttendance()"
+                    >
+                        🔍 View Attendance
+                    </button>
+
+                </div>
+
+
+                <div style="
+                    margin-top:14px;
+                ">
+
+                    <button
+                        type="button"
+                        class="teacher-btn secondary"
+                        onclick="clearAttendance()"
+                    >
+                        Clear Filters
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ATTENDANCE SUMMARY -->
+            <div class="teacher-card-grid">
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Total Students
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="attendanceTotal"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Present
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="attendancePresent"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Absent
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="attendanceAbsent"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-stat-card">
+
+                    <div class="teacher-stat-label">
+                        Attendance Rate
+                    </div>
+
+                    <div
+                        class="teacher-stat-value"
+                        id="attendanceRate"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ATTENDANCE TABLE -->
+            <div class="teacher-content-card">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                ">
+
+                    <div>
+
+                        <h2>
+                            Student Attendance
+                        </h2>
+
+                        <p>
+                            Present and absent status for the selected class.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="teacher-btn secondary"
+                        onclick="loadAttendance()"
+                    >
+                        🔄 Refresh
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="attendanceContainer"
+                    style="margin-top:20px;"
+                >
+
+                    <p style="color:#94a3b8;">
+                        Select a class offering and date to view attendance.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+
+// ======================================
+// LOAD CLASS OFFERINGS
+// ======================================
+
+async function loadAttendanceOfferings() {
+
+    const select =
+        document.getElementById(
+            "attendanceOffering"
+        );
+
+
+    try {
+
+        const response =
+            await fetch("/get_offerings");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+            return;
+        }
+
+
+        select.innerHTML =
+            '<option value="">Select Class Offering</option>';
+
+
+        data.offerings.forEach(offering => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                offering.offering_id;
+
+
+            option.textContent =
+                `${offering.subject_name} — ${offering.department} Sem ${offering.semester} (${offering.academic_year})`;
+
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Attendance offering error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ======================================
+// LOAD ATTENDANCE
+// ======================================
+
+async function loadAttendance() {
+
+    const offeringId =
+        document.getElementById(
+            "attendanceOffering"
+        ).value;
+
+
+    const date =
+        document.getElementById(
+            "attendanceDate"
+        ).value;
+
+
+    const container =
+        document.getElementById(
+            "attendanceContainer"
+        );
+
+
+    if (!offeringId || !date) {
+
+        container.innerHTML =
+            "<p style='color:#fca5a5;'>Please select a class offering and date.</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "<p style='color:#94a3b8;'>Loading attendance...</p>";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/teacher_attendance?offering_id=${offeringId}&date=${date}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            container.innerHTML =
+                `<p style='color:#fca5a5;'>${data.message || "Unable to load attendance."}</p>`;
+
+            return;
+
+        }
+
+
+        const students =
+            data.students || data.attendance || [];
+
+
+        if (students.length === 0) {
+
+            container.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:35px;
+                    color:#94a3b8;
+                ">
+
+                    <div style="font-size:40px;">
+                        📋
+                    </div>
+
+                    <h3 style="color:#f8fafc;">
+                        No students found
+                    </h3>
+
+                    <p>
+                        No enrolled students are available for this class.
+                    </p>
+
+                </div>
+
+            `;
+
+            updateSummary([]);
+
+            return;
+
+        }
+
+
+        let html = `
+
+            <div class="teacher-table-wrapper">
+
+                <table class="teacher-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Student</th>
+                            <th>USN</th>
+                            <th>Department</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+        `;
+
+
+        students.forEach(student => {
+
+            const status =
+                student.status ||
+                student.attendance_status ||
+                "Absent";
+
+
+            const isPresent =
+                status.toLowerCase() === "present";
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${student.name || ""}
+                    </td>
+
+                    <td>
+                        ${student.usn || ""}
+                    </td>
+
+                    <td>
+                        ${student.department || ""}
+                    </td>
+
+                    <td>
+
+                        <span style="
+                            display:inline-block;
+                            padding:6px 11px;
+                            border-radius:20px;
+                            background:${isPresent
+                                ? "rgba(34,197,94,0.12)"
+                                : "rgba(239,68,68,0.12)"};
+                            color:${isPresent
+                                ? "#86efac"
+                                : "#fca5a5"};
+                            font-size:12px;
+                            font-weight:600;
+                        ">
+
+                            ${status}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        container.innerHTML = html;
+
+
+        updateSummary(students);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Attendance loading error:",
+            error
+        );
+
+        container.innerHTML =
+            "<p style='color:#fca5a5;'>Error loading attendance.</p>";
+
+    }
+
+}
+
+
+
+// ======================================
+// SUMMARY
+// ======================================
+
+function updateSummary(students) {
+
+    const total =
+        students.length;
+
+
+    const present =
+        students.filter(student => {
+
+            const status =
+                student.status ||
+                student.attendance_status ||
+                "Absent";
+
+            return status.toLowerCase() === "present";
+
+        }).length;
+
+
+    const absent =
+        total - present;
+
+
+    const rate =
+        total > 0
+            ? Math.round(
+                (present / total) * 100
+              )
+            : 0;
+
+
+    document.getElementById(
+        "attendanceTotal"
+    ).textContent = total;
+
+
+    document.getElementById(
+        "attendancePresent"
+    ).textContent = present;
+
+
+    document.getElementById(
+        "attendanceAbsent"
+    ).textContent = absent;
+
+
+    document.getElementById(
+        "attendanceRate"
+    ).textContent =
+        rate + "%";
+
+}
+
+
+
+// ======================================
+// CLEAR FILTERS
+// ======================================
+
+function clearAttendance() {
+
+    document.getElementById(
+        "attendanceOffering"
+    ).value = "";
+
+
+    document.getElementById(
+        "attendanceDate"
+    ).value = "";
+
+
+    document.getElementById(
+        "attendanceTotal"
+    ).textContent = "0";
+
+
+    document.getElementById(
+        "attendancePresent"
+    ).textContent = "0";
+
+
+    document.getElementById(
+        "attendanceAbsent"
+    ).textContent = "0";
+
+
+    document.getElementById(
+        "attendanceRate"
+    ).textContent = "0%";
+
+
+    document.getElementById(
+        "attendanceContainer"
+    ).innerHTML = `
+
+        <p style="color:#94a3b8;">
+            Select a class offering and date to view attendance.
+        </p>
+
+    `;
+
+}
+
+
+
+// ======================================
+// INITIAL LOAD
+// ======================================
+
+loadAttendanceOfferings();
+
+</script>
+
+{% endblock %}

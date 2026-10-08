@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block content %}
+
+<div class="student-ui">
+
+    <div class="student-layout">
+
+        <aside class="student-sidebar">
+
+            <div class="student-brand">
+
+                <div class="student-brand-icon">
+                    SA
+                </div>
+
+                <div>
+                    <div class="student-brand-title">
+                        SmartAttend
+                    </div>
+
+                    <div class="student-brand-subtitle">
+                        Student Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <nav class="student-menu">
+
+                <a href="/dashboard">
+                    🏠 Dashboard
+                </a>
+
+                <a href="/student_scan">
+                    📷 Scan Attendance
+                </a>
+
+                <a href="/student_attendance">
+                    📋 My Attendance
+                </a>
+
+                <a href="/student_subjects" class="active">
+                    📊 Subjects
+                </a>
+
+                <a href="/logout" class="logout">
+                    🚪 Logout
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="student-main">
+
+            <div class="student-page-header">
+
+                <h1>
+                    My Subjects 📊
+                </h1>
+
+                <p>
+                    Check your attendance for each subject.
+                </p>
+
+            </div>
+
+
+            <div class="student-subject-grid"
+                 id="subjectAttendance">
+
+                <div class="student-content-card">
+                    Loading...
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function loadSubjectAttendance() {
+
+    const container =
+        document.getElementById(
+            "subjectAttendance"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                "/subject_attendance"
+            );
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.success ||
+            !data.subjects ||
+            data.subjects.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="student-content-card">
+
+                    <p>
+                        No subject attendance data yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        data.subjects.forEach(function(subject) {
+
+            html += `
+
+                <div class="student-subject-card">
+
+                    <div class="student-subject-icon">
+                        📚
+                    </div>
+
+                    <div class="student-subject-name">
+                        ${subject.subject_name}
+                    </div>
+
+                    <div class="student-subject-percentage">
+                        ${subject.percentage}%
+                    </div>
+
+                    <div class="student-progress">
+
+                        <div
+                            class="student-progress-fill"
+                            style="width:${subject.percentage}%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+        container.innerHTML =
+            html;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+
+            <div class="student-content-card">
+
+                <p>
+                    Could not load subjects.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+loadSubjectAttendance();
+
+</script>
+
+{% endblock %}

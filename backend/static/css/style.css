@@ -1,0 +1,2540 @@
+* {
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #eef2ff;
+
+    background:
+        radial-gradient(circle at 10% 10%, #273b7a, transparent 30%),
+        radial-gradient(circle at 90% 20%, #5a246b, transparent 30%),
+        #080b17;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   GENERAL NAVIGATION
+   ========================================================= */
+
+nav:not(.teacher-menu) {
+    height: 70px;
+    padding: 0 6%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid #ffffff18;
+
+    background: #080b1790;
+    backdrop-filter: blur(15px);
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav b {
+    font-size: 22px;
+}
+
+nav a,
+main a {
+    color: #aabaff;
+    text-decoration: none;
+    margin-left: 22px;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+main {
+    max-width: 1180px;
+    margin: auto;
+    padding: 50px 24px;
+}
+
+
+/* =========================================================
+   LOGIN / AUTH
+   ========================================================= */
+
+.auth {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+
+    gap: 50px;
+    align-items: center;
+
+    min-height: 70vh;
+}
+
+.auth h1 {
+    font-size: 62px;
+    line-height: 1;
+    margin: 18px 0;
+}
+
+.auth em {
+    font-style: normal;
+    color: #c18aff;
+}
+
+.auth p,
+.card > p,
+header p {
+    color: #aab4d3;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+    background: #ffffff0b;
+
+    border: 1px solid #ffffff18;
+    border-radius: 24px;
+
+    padding: 28px;
+
+    box-shadow: 0 20px 70px #0005;
+
+    backdrop-filter: blur(18px);
+}
+
+.formcard {
+    max-width: 650px;
+    margin: 30px auto;
+}
+
+.small {
+    max-width: 450px;
+}
+
+.big {
+    font-size: 40px;
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+label {
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #aabaff;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+input,
+select {
+    width: 100%;
+
+    padding: 15px;
+    margin: 7px 0;
+
+    border: 1px solid #ffffff1d;
+    border-radius: 13px;
+
+    background: #ffffff0b;
+    color: #fff;
+}
+
+select {
+    color-scheme: dark;
+}
+
+select option {
+    background: #17152b;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button {
+    width: 100%;
+
+    padding: 15px;
+    margin-top: 10px;
+
+    border: 0;
+    border-radius: 13px;
+
+    background: linear-gradient(90deg, #667cff, #a45cff);
+
+    color: white;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   GENERAL GRIDS
+   ========================================================= */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.stats small {
+    display: block;
+    color: #9da8c8;
+}
+
+.stats strong {
+    font-size: 28px;
+    display: block;
+    margin: 12px 0;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+.center {
+    text-align: center;
+}
+
+
+/* =========================================================
+   UPLOAD
+   ========================================================= */
+
+.upload {
+    display: block;
+
+    margin-top: 10px;
+    padding: 18px;
+
+    border: 1px dashed #ffffff35;
+    border-radius: 14px;
+
+    color: #cbd3eb;
+}
+
+.upload input {
+    border: 0;
+}
+
+
+/* =========================================================
+   HEADERS
+   ========================================================= */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+header h1 {
+    font-size: 40px;
+    margin: 10px 0;
+}
+
+
+/* =========================================================
+   QR
+   ========================================================= */
+
+.qr {
+    width: 330px;
+    max-width: 100%;
+
+    background: white;
+    padding: 12px;
+
+    border-radius: 14px;
+}
+
+#reader {
+    max-width: 420px;
+    margin: 20px auto;
+}
+
+
+/* =========================================================
+   TEACHER ATTENDANCE TABLE
+   ========================================================= */
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.section-title button {
+    width: auto;
+    padding: 11px 18px;
+    margin-top: 0;
+}
+
+.attendance-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.attendance-table th {
+    text-align: left;
+    padding: 14px;
+
+    color: #aabaff;
+
+    border-bottom: 1px solid #ffffff20;
+
+    font-size: 13px;
+}
+
+.attendance-table td {
+    padding: 14px;
+
+    border-bottom: 1px solid #ffffff10;
+
+    color: #dce2f7;
+}
+
+.attendance-table tbody tr:hover {
+    background: #ffffff08;
+}
+
+.status-present {
+    display: inline-block;
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    background: #22c55e22;
+    color: #86efac;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.empty-state {
+    text-align: center;
+
+    padding: 40px 20px;
+
+    color: #aab4d3;
+}
+
+.empty-state h3 {
+    color: #eef2ff;
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   PASSWORD VISIBILITY
+   ========================================================= */
+
+.password-box {
+    position: relative;
+    width: 100%;
+}
+
+.password-box input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: auto;
+    margin: 0;
+    padding: 6px;
+
+    border: none;
+    background: transparent;
+    box-shadow: none;
+
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    color: #ffffff;
+}
+
+.password-toggle:focus {
+    outline: none;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+
+/* =========================================================
+   SMARTATTEND TEACHER UI
+   ========================================================= */
+
+.teacher-ui {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(59, 130, 246, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(139, 92, 246, 0.10),
+            transparent 30%
+        ),
+        #0b1020;
+
+    color: #f8fafc;
+}
+
+.teacher-ui * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TEACHER LAYOUT
+   ========================================================= */
+
+.teacher-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   TEACHER SIDEBAR
+   ========================================================= */
+
+.teacher-sidebar {
+    width: 250px;
+
+    background: #111827;
+
+    border-right: 1px solid rgba(255,255,255,0.08);
+
+    padding: 24px 16px;
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    z-index: 9999;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   TEACHER BRAND
+   ========================================================= */
+
+.teacher-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 8px 10px 28px;
+}
+
+.teacher-brand-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    display: grid;
+    place-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #7c3aed
+    );
+
+    font-weight: 800;
+    color: white;
+}
+
+.teacher-brand-title {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.teacher-brand-subtitle {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   TEACHER MENU
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   The general CSS above contains a global nav rule.
+   These rules completely override it for the teacher menu.
+*/
+
+.teacher-sidebar .teacher-menu {
+    height: auto !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+
+    gap: 6px !important;
+
+    position: static !important;
+
+    background: transparent !important;
+
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* =========================================================
+   TEACHER MENU LINKS
+   ========================================================= */
+
+.teacher-sidebar .teacher-menu a {
+    display: flex !important;
+
+    align-items: center !important;
+
+    width: 100% !important;
+    height: auto !important;
+
+    margin: 0 !important;
+
+    padding: 12px 14px !important;
+
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    border-radius: 10px !important;
+
+    background: transparent !important;
+
+    color: #94a3b8 !important;
+
+    text-decoration: none !important;
+
+    font-size: 14px !important;
+
+    position: relative !important;
+
+    pointer-events: auto !important;
+
+    cursor: pointer !important;
+
+    z-index: 10000 !important;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* Hover */
+
+.teacher-sidebar .teacher-menu a:hover {
+    background: rgba(59,130,246,0.14) !important;
+    color: #ffffff !important;
+}
+
+
+/* Active */
+
+.teacher-sidebar .teacher-menu a.active {
+    background: rgba(59,130,246,0.18) !important;
+    color: #ffffff !important;
+}
+
+
+/* Logout */
+
+.teacher-sidebar .teacher-menu a.logout {
+    margin-top: 20px !important;
+    color: #fca5a5 !important;
+}
+
+
+/* =========================================================
+   TEACHER MAIN CONTENT
+   ========================================================= */
+
+.teacher-main {
+    margin-left: 250px;
+
+    width: calc(100% - 250px);
+
+    min-height: 100vh;
+
+    padding: 34px;
+
+    position: relative;
+
+    z-index: 1;
+}
+
+
+/* =========================================================
+   TEACHER HEADER
+   ========================================================= */
+
+.teacher-page-header {
+    margin-bottom: 28px;
+}
+
+.teacher-page-header h1 {
+    margin: 0;
+
+    font-size: 30px;
+
+    font-weight: 750;
+
+    letter-spacing: -0.5px;
+}
+
+.teacher-page-header p {
+    margin: 8px 0 0;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   TEACHER STATISTICS
+   ========================================================= */
+
+.teacher-card-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+}
+
+.teacher-stat-card {
+    background: #111827;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,0.18);
+}
+
+.teacher-stat-label {
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+.teacher-stat-value {
+    margin-top: 10px;
+
+    font-size: 30px;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   TEACHER CONTENT CARDS
+   ========================================================= */
+
+.teacher-content-card {
+    margin-top: 22px;
+
+    background: #111827;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,0.18);
+}
+
+.teacher-content-card h2 {
+    margin-top: 0;
+
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   TEACHER TABLE
+   ========================================================= */
+
+.teacher-table-wrapper {
+    overflow-x: auto;
+}
+
+.teacher-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.teacher-table th,
+.teacher-table td {
+    padding: 13px 12px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    text-align: left;
+}
+
+.teacher-table th {
+    color: #94a3b8;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+.teacher-table td {
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   TEACHER BUTTONS
+   ========================================================= */
+
+.teacher-btn {
+    border: none;
+
+    border-radius: 9px;
+
+    padding: 10px 15px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    color: white;
+
+    background: #2563eb;
+
+    transition: 0.2s ease;
+}
+
+.teacher-btn:hover {
+    background: #1d4ed8;
+
+    transform: translateY(-1px);
+}
+
+.teacher-btn.secondary {
+    background: #374151;
+}
+
+.teacher-btn.danger {
+    background: #b91c1c;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .teacher-sidebar {
+        width: 210px;
+    }
+
+    .teacher-main {
+        margin-left: 210px;
+
+        width: calc(100% - 210px);
+
+        padding: 24px;
+    }
+
+    .teacher-card-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 800px) {
+
+    .auth,
+    .columns {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .auth h1 {
+        font-size: 46px;
+    }
+
+    .section-title {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .section-title button {
+        width: 100%;
+    }
+
+    header h1 {
+        font-size: 30px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .teacher-sidebar {
+        position: static !important;
+
+        width: 100% !important;
+    }
+
+    .teacher-layout {
+        flex-direction: column;
+    }
+
+    .teacher-main {
+        margin-left: 0;
+
+        width: 100%;
+
+        padding: 18px;
+    }
+
+    .teacher-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   TEACHER DASHBOARD - INNER CARDS
+   ========================================================= */
+
+.teacher-content-card {
+    margin-top: 22px !important;
+
+    background: #111827 !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+    border-radius: 18px !important;
+
+    padding: 24px !important;
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25) !important;
+}
+
+
+/* QUICK ACTION CARDS */
+
+.teacher-action-card {
+    display: block !important;
+
+    background: #1b2942 !important;
+
+    border: 1px solid rgba(99, 130, 255, 0.22) !important;
+
+    border-radius: 16px !important;
+
+    padding: 22px !important;
+
+    color: #ffffff !important;
+
+    text-decoration: none !important;
+
+    margin: 0 !important;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.20) !important;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease !important;
+}
+
+
+.teacher-action-card:hover {
+    background: #24385c !important;
+
+    border-color: rgba(99, 130, 255, 0.50) !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-3px);
+}
+
+
+.teacher-action-card .teacher-stat-label {
+    color: #aabaff !important;
+}
+
+
+.teacher-action-text {
+    margin-top: 10px !important;
+
+    color: #f8fafc !important;
+
+    font-size: 15px;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   FINAL PAGE + TEACHER UI FIX
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   RESTORE NORMAL PAGE CONTAINER
+   This replaces the styling that <main> previously provided.
+--------------------------------------------------------- */
+
+.page-container {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 50px 24px;
+}
+
+
+/* ---------------------------------------------------------
+   TEACHER PAGE
+--------------------------------------------------------- */
+
+.teacher-ui {
+    position: relative;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(59, 130, 246, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(139, 92, 246, 0.10),
+            transparent 30%
+        ),
+        #080d1b;
+
+    color: #f8fafc;
+}
+
+
+/* ---------------------------------------------------------
+   LARGE FLOATING CONTENT BOXES
+--------------------------------------------------------- */
+
+.teacher-content-card {
+
+    margin-top: 24px !important;
+
+    background: #151f35 !important;
+
+    border: 1px solid rgba(120, 150, 220, 0.20) !important;
+
+    border-radius: 20px !important;
+
+    padding: 26px !important;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.30) !important;
+}
+
+
+/* ---------------------------------------------------------
+   STATISTIC BOXES
+--------------------------------------------------------- */
+
+.teacher-stat-card {
+
+    background: #111a2d !important;
+
+    border: 1px solid rgba(120, 150, 220, 0.16) !important;
+
+    border-radius: 16px !important;
+
+    padding: 22px !important;
+
+    box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.22) !important;
+}
+
+
+/* ---------------------------------------------------------
+   QUICK ACTION BOXES
+--------------------------------------------------------- */
+
+.teacher-action-card {
+
+    display: block !important;
+
+    width: 100% !important;
+
+    background: #213454 !important;
+
+    border: 1px solid rgba(100, 145, 255, 0.30) !important;
+
+    border-radius: 16px !important;
+
+    padding: 22px !important;
+
+    margin: 0 !important;
+
+    color: #ffffff !important;
+
+    text-decoration: none !important;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.22) !important;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease !important;
+}
+
+
+.teacher-action-card:hover {
+
+    background: #294268 !important;
+
+    border-color: rgba(120, 165, 255, 0.55) !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-3px);
+}
+
+
+.teacher-action-card .teacher-stat-label {
+
+    color: #b8c9ff !important;
+}
+
+
+.teacher-action-text {
+
+    margin-top: 10px !important;
+
+    color: #f8fafc !important;
+
+    font-size: 15px;
+
+    line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   TEACHER SIDEBAR
+--------------------------------------------------------- */
+
+.teacher-sidebar {
+
+    background: #0f1728 !important;
+
+    border-right:
+        1px solid rgba(120, 150, 220, 0.15) !important;
+}
+
+
+/* ---------------------------------------------------------
+   TEACHER MAIN AREA
+--------------------------------------------------------- */
+
+.teacher-main {
+
+    background: transparent !important;
+}
+
+
+/* ---------------------------------------------------------
+   TEACHER PAGE HEADER
+--------------------------------------------------------- */
+
+.teacher-page-header h1 {
+
+    color: #f8fafc !important;
+}
+
+
+.teacher-page-header p {
+
+    color: #94a3b8 !important;
+}
+
+/* =========================================================
+   SMARTATTEND INFORMATION BOX
+   ========================================================= */
+
+.teacher-content-card:last-child {
+    margin-top: 32px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #241d3d,
+            #18172d
+        ) !important;
+
+    border: 1px solid rgba(170, 130, 255, 0.25) !important;
+
+    border-radius: 22px !important;
+
+    padding: 28px !important;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.32) !important;
+}
+
+/* =========================================================
+   FLOATING TEACHER PANELS - FINAL COLORS
+   ========================================================= */
+
+/* QUICK ACTIONS PANEL */
+
+.teacher-content-card:nth-of-type(1) {
+    background: #182b4a !important;
+
+    border: 1px solid rgba(90, 140, 230, 0.30) !important;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.30) !important;
+}
+
+
+/* SMARTATTEND PANEL */
+
+.teacher-content-card:last-child {
+    background: #2a2045 !important;
+
+    border: 1px solid rgba(165, 125, 245, 0.30) !important;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* =========================================================
+   ATTENDANCE PAGE - SECTION SPACING
+   ========================================================= */
+
+/* Space between Attendance Filters and statistics */
+
+.teacher-content-card + .teacher-card-grid {
+    margin-top: 26px !important;
+}
+
+
+/* Space between statistics and Student Attendance */
+
+.teacher-card-grid + .teacher-content-card {
+    margin-top: 30px !important;
+}
+
+/* =========================================================
+   SMARTATTEND TEACHER UI
+   FINAL FLOATING DASHBOARD LAYOUT
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   TEACHER PAGE BACKGROUND
+--------------------------------------------------------- */
+
+.teacher-ui {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 12% 12%,
+            rgba(50, 90, 180, 0.20),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 88% 18%,
+            rgba(145, 55, 180, 0.18),
+            transparent 32%
+        ),
+        #080d1b !important;
+
+    color: #f8fafc;
+}
+
+
+/* ---------------------------------------------------------
+   SIDEBAR
+--------------------------------------------------------- */
+
+.teacher-sidebar {
+    position: fixed !important;
+
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+
+    width: 250px !important;
+
+    background: #0e1728 !important;
+
+    border-right:
+        1px solid rgba(255, 255, 255, 0.08) !important;
+
+    z-index: 9999 !important;
+}
+
+
+/* ---------------------------------------------------------
+   SIDEBAR MENU
+--------------------------------------------------------- */
+
+.teacher-sidebar .teacher-menu {
+    width: 100% !important;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    gap: 6px !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    position: static !important;
+
+    background: transparent !important;
+
+    border: none !important;
+
+    pointer-events: auto !important;
+}
+
+
+.teacher-sidebar .teacher-menu a {
+    display: flex !important;
+
+    align-items: center !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 12px 14px !important;
+
+    border-radius: 10px !important;
+
+    background: transparent !important;
+
+    color: #94a3b8 !important;
+
+    text-decoration: none !important;
+
+    font-size: 14px !important;
+
+    cursor: pointer !important;
+
+    pointer-events: auto !important;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease !important;
+}
+
+
+.teacher-sidebar .teacher-menu a:hover {
+    background: rgba(70, 110, 200, 0.16) !important;
+
+    color: #ffffff !important;
+}
+
+
+.teacher-sidebar .teacher-menu a.active {
+    background: #1c355d !important;
+
+    color: #ffffff !important;
+}
+
+
+.teacher-sidebar .teacher-menu a.logout {
+    margin-top: 20px !important;
+
+    color: #fca5a5 !important;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN FLOATING DASHBOARD PANEL
+--------------------------------------------------------- */
+
+.teacher-main {
+    position: relative !important;
+
+    z-index: 1 !important;
+
+    /* sidebar width 250px + 25px gap */
+    margin-left: 275px !important;
+
+    /* leave 25px space on right */
+    margin-right: 25px !important;
+
+    /* 25px space from top */
+    margin-top: 25px !important;
+
+    /* 25px space from bottom */
+    margin-bottom: 25px !important;
+
+    width: calc(100% - 300px) !important;
+
+    max-width: none !important;
+
+    min-height: calc(100vh - 50px) !important;
+
+    padding: 40px !important;
+
+    border-radius: 24px !important;
+
+    /* DIFFERENT FROM PAGE BACKGROUND */
+    background:
+        linear-gradient(
+            145deg,
+            #18243d,
+            #121a30
+        ) !important;
+
+    border:
+        1px solid rgba(130, 155, 210, 0.22) !important;
+
+    box-shadow:
+        0 22px 60px rgba(0, 0, 0, 0.38) !important;
+}
+
+
+/* ---------------------------------------------------------
+   PAGE HEADER
+--------------------------------------------------------- */
+
+.teacher-page-header {
+    margin-bottom: 28px !important;
+}
+
+
+.teacher-page-header h1 {
+    color: #f8fafc !important;
+
+    margin: 0 !important;
+
+    font-size: 30px !important;
+}
+
+
+.teacher-page-header p {
+    color: #94a3b8 !important;
+
+    margin-top: 8px !important;
+}
+
+
+/* ---------------------------------------------------------
+   STATISTICS GRID
+--------------------------------------------------------- */
+
+.teacher-card-grid {
+    display: grid !important;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 18px !important;
+}
+
+
+/* ---------------------------------------------------------
+   STATISTIC CARDS
+--------------------------------------------------------- */
+
+.teacher-stat-card {
+    background:
+        linear-gradient(
+            145deg,
+            #121d32,
+            #0f182a
+        ) !important;
+
+    border:
+        1px solid rgba(130, 155, 210, 0.18) !important;
+
+    border-radius: 17px !important;
+
+    padding: 22px !important;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.24) !important;
+}
+
+
+.teacher-stat-label {
+    color: #9fb0d1 !important;
+}
+
+
+.teacher-stat-value {
+    color: #ffffff !important;
+
+    margin-top: 10px !important;
+
+    font-size: 30px !important;
+
+    font-weight: 750 !important;
+}
+
+
+/* ---------------------------------------------------------
+   FLOATING INNER PANELS
+--------------------------------------------------------- */
+
+.teacher-content-card {
+    margin-top: 28px !important;
+
+    padding: 28px !important;
+
+    border-radius: 21px !important;
+
+    /* DIFFERENT FROM MAIN FLOATING PANEL */
+    background:
+        linear-gradient(
+            145deg,
+            #202b49,
+            #19233c
+        ) !important;
+
+    border:
+        1px solid rgba(145, 165, 215, 0.25) !important;
+
+    box-shadow:
+        0 15px 38px rgba(0, 0, 0, 0.28) !important;
+}
+
+
+/* ---------------------------------------------------------
+   QUICK ACTION CARDS
+--------------------------------------------------------- */
+
+.teacher-action-card {
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 22px !important;
+
+    border-radius: 16px !important;
+
+    text-decoration: none !important;
+
+    color: #ffffff !important;
+
+    /* CLEARLY DIFFERENT FROM INNER PANEL */
+    background:
+        linear-gradient(
+            145deg,
+            #29446f,
+            #21385d
+        ) !important;
+
+    border:
+        1px solid rgba(110, 155, 235, 0.34) !important;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.22) !important;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease !important;
+}
+
+
+.teacher-action-card:hover {
+    background:
+        linear-gradient(
+            145deg,
+            #345682,
+            #29466e
+        ) !important;
+
+    border-color:
+        rgba(140, 180, 255, 0.60) !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-3px);
+}
+
+
+.teacher-action-card .teacher-stat-label {
+    color: #bfd0ff !important;
+}
+
+
+.teacher-action-text {
+    margin-top: 10px !important;
+
+    color: #f8fafc !important;
+
+    font-size: 15px !important;
+
+    line-height: 1.5 !important;
+}
+
+
+/* ---------------------------------------------------------
+   SMARTATTEND INFORMATION PANEL
+--------------------------------------------------------- */
+
+.teacher-content-card:last-child {
+    background:
+        linear-gradient(
+            145deg,
+            #30234f,
+            #241b3c
+        ) !important;
+
+    border:
+        1px solid rgba(175, 135, 255, 0.28) !important;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .teacher-main {
+        margin-left: 235px !important;
+
+        margin-right: 18px !important;
+
+        width: calc(100% - 253px) !important;
+
+        padding: 28px !important;
+    }
+
+    .teacher-card-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .teacher-sidebar {
+        position: static !important;
+
+        width: 100% !important;
+    }
+
+    .teacher-layout {
+        flex-direction: column !important;
+    }
+
+    .teacher-main {
+        margin: 18px !important;
+
+        width: calc(100% - 36px) !important;
+
+        min-height: auto !important;
+
+        padding: 22px !important;
+    }
+
+    .teacher-card-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* =========================================================
+   SMARTATTEND STUDENT UI
+   ========================================================= */
+
+.student-ui {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 12% 12%,
+            rgba(50, 90, 180, 0.20),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 88% 18%,
+            rgba(145, 55, 180, 0.18),
+            transparent 32%
+        ),
+        #080d1b;
+
+    color: #f8fafc;
+}
+
+
+/* =========================================================
+   STUDENT LAYOUT
+   ========================================================= */
+
+.student-layout {
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   STUDENT SIDEBAR
+   ========================================================= */
+
+.student-sidebar {
+    position: fixed;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 250px;
+
+    padding: 30px 18px;
+
+    background: #0e1728;
+
+    border-right:
+        1px solid rgba(255,255,255,0.08);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.student-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 10px 30px;
+}
+
+
+.student-brand-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    color: white;
+
+    font-weight: 800;
+
+    font-size: 16px;
+}
+
+
+.student-brand-title {
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+
+.student-brand-subtitle {
+    margin-top: 3px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   SIDEBAR MENU
+   ========================================================= */
+
+.student-menu {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.student-menu a {
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    border-radius: 10px;
+
+    color: #94a3b8;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.student-menu a:hover {
+    background:
+        rgba(70,110,200,0.16);
+
+    color: white;
+}
+
+
+.student-menu a.active {
+    background: #1c355d;
+
+    color: white;
+}
+
+
+.student-menu a.logout {
+    margin-top: 22px;
+
+    color: #fca5a5;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.student-main {
+    margin-left: 250px;
+
+    min-height: 100vh;
+
+    padding: 48px 52px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.student-page-header {
+    max-width: 1000px;
+
+    margin: 0 auto 28px;
+}
+
+
+.student-page-header h1 {
+    margin: 0;
+
+    font-size: 34px;
+
+    font-weight: 800;
+
+    color: #ffffff;
+}
+
+
+.student-page-header p {
+    margin-top: 8px;
+
+    color: #8fa6c7;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   STAT CARDS
+   ========================================================= */
+
+.student-card-grid {
+    max-width: 1000px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+
+.student-stat-card {
+    padding: 25px;
+
+    border-radius: 17px;
+
+    background: #111827;
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.22);
+}
+
+
+.student-stat-label {
+    color: #8fa6c7;
+
+    font-size: 13px;
+
+    margin-bottom: 12px;
+}
+
+
+.student-stat-value {
+    color: white;
+
+    font-size: 25px;
+
+    font-weight: 800;
+}
+
+
+.student-face-status {
+    margin-top: 9px;
+
+    color: #6ee7a0;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   CONTENT CARD
+   ========================================================= */
+
+.student-content-card {
+    max-width: 1000px;
+
+    margin: 26px auto 0;
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    background: #111827;
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,0.24);
+}
+
+
+.student-content-card h2 {
+    margin-top: 0;
+
+    color: white;
+
+    font-size: 21px;
+}
+
+
+.student-content-card p {
+    color: #8fa6c7;
+}
+
+
+/* =========================================================
+   ACTION CARDS
+   ========================================================= */
+
+.student-action-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 16px;
+
+    margin-top: 22px;
+}
+
+
+.student-action-card {
+    display: flex;
+
+    gap: 14px;
+
+    align-items: center;
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    background: #1b2942;
+
+    border:
+        1px solid rgba(100,145,255,0.20);
+
+    color: white;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.student-action-card:hover {
+    transform: translateY(-3px);
+
+    background: #24385b;
+}
+
+
+.student-action-icon {
+    font-size: 25px;
+}
+
+
+.student-action-card strong {
+    display: block;
+
+    color: white;
+
+    font-size: 15px;
+}
+
+
+.student-action-card span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #9db0cd;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.student-section-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+.student-section-heading h2 {
+    margin-bottom: 4px;
+}
+
+
+.student-small-link {
+    color: #8db4ff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+}
+
+
+.student-small-link:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   ATTENDANCE ROW
+   ========================================================= */
+
+.student-attendance-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 16px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.08);
+}
+
+
+.student-attendance-row strong {
+    display: block;
+
+    color: white;
+
+    font-size: 15px;
+}
+
+
+.student-attendance-row small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #8296b4;
+
+    font-size: 12px;
+}
+
+
+.student-present {
+    color: #6ee7a0;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   BIG PERCENTAGE
+   ========================================================= */
+
+.student-attendance-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+.student-big-percentage {
+    color: #8db4ff;
+
+    font-size: 34px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   SUBJECT GRID
+   ========================================================= */
+
+.student-subject-grid {
+    max-width: 1000px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+}
+
+
+.student-subject-card {
+    padding: 25px;
+
+    border-radius: 17px;
+
+    background: #111827;
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.22);
+}
+
+
+.student-subject-icon {
+    font-size: 25px;
+
+    margin-bottom: 12px;
+}
+
+
+.student-subject-name {
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+
+.student-subject-percentage {
+    margin-top: 15px;
+
+    color: #8db4ff;
+
+    font-size: 27px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.student-progress {
+    height: 8px;
+
+    margin-top: 14px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #243047;
+}
+
+
+.student-progress-fill {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #8b5cf6
+        );
+}
+
+
+/* =========================================================
+   QR SCANNER
+   ========================================================= */
+
+.student-scan-card {
+    text-align: center;
+}
+
+
+.student-qr-reader {
+    width: 100%;
+
+    max-width: 520px;
+
+    margin: 25px auto;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+}
+
+
+.student-face-section {
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top:
+        1px solid rgba(255,255,255,0.08);
+}
+
+
+.student-face-video {
+    width: 100%;
+
+    max-width: 420px;
+
+    display: block;
+
+    margin: 20px auto;
+
+    border-radius: 16px;
+
+    background: #050914;
+}
+
+
+.student-primary-button {
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 13px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.student-primary-button:hover {
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .student-sidebar {
+        width: 210px;
+    }
+
+    .student-main {
+        margin-left: 210px;
+
+        padding: 35px 25px;
+    }
+
+    .student-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-subject-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .student-sidebar {
+        position: static;
+
+        width: 100%;
+
+        min-height: auto;
+    }
+
+    .student-main {
+        margin-left: 0;
+
+        padding: 25px 16px;
+    }
+
+    .student-menu {
+        flex-direction: row;
+
+        flex-wrap: wrap;
+    }
+
+    .student-menu a {
+        width: auto;
+    }
+
+}
+
+nav.student-menu {
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    position: static !important;
+}
+
+/* =========================================================
+   TEACHER DASHBOARD - MATCH STUDENT DASHBOARD STYLE
+   ========================================================= */
+
+.teacher-main {
+    margin-left: 250px !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+
+    width: calc(100% - 250px) !important;
+    min-height: 100vh !important;
+
+    padding: 48px 52px !important;
+
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+
+/* HEADER */
+
+.teacher-page-header {
+    max-width: 1000px !important;
+    margin: 0 auto 28px !important;
+}
+
+.teacher-page-header h1 {
+    color: #ffffff !important;
+}
+
+.teacher-page-header p {
+    color: #8fa6c7 !important;
+}
+
+
+/* STATISTIC CARDS */
+
+.teacher-card-grid {
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+}
+
+.teacher-stat-card {
+    padding: 25px !important;
+
+    border-radius: 17px !important;
+
+    background: #111827 !important;
+
+    border: 1px solid rgba(255,255,255,0.08) !important;
+
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22) !important;
+}
+
+
+/* QUICK ACTIONS / OTHER PANELS */
+
+.teacher-content-card {
+    max-width: 1000px !important;
+    margin: 26px auto 0 !important;
+
+    padding: 28px !important;
+
+    border-radius: 18px !important;
+
+    background: #111827 !important;
+
+    border: 1px solid rgba(255,255,255,0.08) !important;
+
+    box-shadow: 0 15px 35px rgba(0,0,0,0.24) !important;
+}
+
+
+/* QUICK ACTION CARDS */
+
+.teacher-action-card {
+    background: #1b2942 !important;
+
+    border: 1px solid rgba(100,145,255,0.20) !important;
+
+    border-radius: 14px !important;
+
+    box-shadow: none !important;
+}
+
+.teacher-action-card:hover {
+    background: #24385b !important;
+}
+
+
+/* SIDEBAR */
+
+.teacher-sidebar {
+    background: #0e1728 !important;
+    border-right: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    .teacher-main {
+        margin-left: 210px !important;
+        width: calc(100% - 210px) !important;
+        padding: 35px 25px !important;
+    }
+
+    .teacher-card-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .teacher-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 25px 16px !important;
+    }
+
+    .teacher-card-grid {
+        grid-template-columns: 1fr !important;
+    }
+}

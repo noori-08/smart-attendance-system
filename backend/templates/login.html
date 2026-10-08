@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="auth">
+
+    <!-- LEFT SIDE -->
+    <div>
+
+        <label>SMART CAMPUS</label>
+
+        <h1>
+            Attendance,<br>
+            <em>made intelligent.</em>
+        </h1>
+
+        <p>
+            Dynamic QR · GPS verification · secure attendance.
+        </p>
+
+    </div>
+
+
+    <!-- RIGHT SIDE -->
+    <div class="card" id="loginCard">
+
+        <div class="big">🎓</div>
+
+        <h2>Choose Login</h2>
+
+        <p>
+            Select how you want to continue.
+        </p>
+
+
+        <!-- STUDENT -->
+        <button
+            type="button"
+            onclick="showStudentLogin()"
+        >
+            🎓 &nbsp; Student
+        </button>
+
+
+        <!-- TEACHER -->
+        <button
+            type="button"
+            onclick="window.location.href='/teacher'"
+        >
+            👨‍🏫 &nbsp; Teacher
+        </button>
+
+    </div>
+
+</section>
+
+
+<script>
+
+function showStudentLogin(){
+
+    document.getElementById("loginCard").innerHTML = `
+
+        <div class="big">🎓</div>
+
+        <h2>Student Login</h2>
+
+        <p>
+            Login with your registered college account.
+        </p>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="student@college.com"
+        >
+
+        <div class="password-box">
+
+            <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+            >
+
+            <button
+                type="button"
+                class="password-toggle"
+                onclick="togglePassword()"
+                aria-label="Show password"
+            >
+                <svg
+                    class="eye-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </button>
+
+        </div>
+
+        <button
+            type="button"
+            onclick="studentLogin()"
+        >
+            Login
+        </button>
+
+        <p id="result"></p>
+
+        <a href="/register">
+            New student? Register here →
+        </a>
+
+        <button
+            type="button"
+            onclick="location.reload()"
+            style="margin-top:12px;"
+        >
+            ← Back
+        </button>
+
+    `;
+}
+
+</script>
+
+{% endblock %}
